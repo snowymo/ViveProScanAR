@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViveProTest", "ViveProTest.csproj", "{D7A64D46-3CC9-F3DF-5370-07F10E791123}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViveProTest.Editor", "ViveProTest.Editor.csproj", "{3B014C20-C7F0-B60B-1E50-96EB9AD51182}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7A64D46-3CC9-F3DF-5370-07F10E791123}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7A64D46-3CC9-F3DF-5370-07F10E791123}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7A64D46-3CC9-F3DF-5370-07F10E791123}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7A64D46-3CC9-F3DF-5370-07F10E791123}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B014C20-C7F0-B60B-1E50-96EB9AD51182}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B014C20-C7F0-B60B-1E50-96EB9AD51182}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B014C20-C7F0-B60B-1E50-96EB9AD51182}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B014C20-C7F0-B60B-1E50-96EB9AD51182}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

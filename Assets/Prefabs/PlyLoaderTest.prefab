@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1512801033921850}
+  m_IsPrefabParent: 1
+--- !u!1 &1512801033921850
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4363787911198040}
+  - component: {fileID: 114146039487412100}
+  m_Layer: 0
+  m_Name: PlyLoaderTest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4363787911198040
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1512801033921850}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114146039487412100
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1512801033921850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb86dea7acaec414c8a1b6252db112c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fileName: take1.ply
+  defaultMat: {fileID: 2100000, guid: 3f5766a8b67794141ac19c1a51d27083, type: 2}
+  defaultMat2: {fileID: 2100000, guid: 6729a932de5127b419aacfd9be7dde0d, type: 2}
+  secondController: {fileID: 0}
+  TsecondController:
+    e00: 0.06906
+    e01: -0.304376
+    e02: -0.950045
+    e03: 680.04
+    e10: 0.0258742
+    e11: 0.952545
+    e12: -0.303296
+    e13: 890.058
+    e20: 0.997277
+    e21: -0.00363602
+    e22: 0.0736582
+    e23: 741.8
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 1
