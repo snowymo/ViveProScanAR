@@ -283,11 +283,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1770257344}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2994b1d1523ecb64e91cfb97c1c4e910, type: 3}
+  m_Script: {fileID: 11500000, guid: 541c5cdc1080f6b4cbeb59433500ec23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultComputerIP: 
-  sendingPort: 0
+  msg: 
+  cmd: []
+  fm: []
+  test: []
+  topic: nm
 --- !u!4 &1770257346
 Transform:
   m_ObjectHideFlags: 0
