@@ -5,9 +5,11 @@ using System;
 using System.Text;
 
 public class client : MonoBehaviour {
+    public string msg, meshPath;
+    float[] cmd, test;
+    public float[] fm;
 
-    public string msg;
-    public float[] cmd,fm, test;
+    public bool bNewMsg;
 
     private NetMqListener _netMqListener;
 
@@ -51,15 +53,16 @@ public class client : MonoBehaviour {
         {
             // receive mesh path
             int len = int.Parse(msg.Substring(2));
-            string s = Encoding.UTF8.GetString(b, 0, len);
-            print(s);
+            meshPath = Encoding.UTF8.GetString(b, 0, len);
+            print(meshPath);
             //print(s[0]);
-            testLoadFunc(s);
+            //testLoadFunc(s);
         }
         else
         {
             Buffer.BlockCopy(b, 0, test, 0, 4);
         }
+        bNewMsg = true;
     }
 
     private void Start()
@@ -70,6 +73,8 @@ public class client : MonoBehaviour {
         cmd = new float[1];
         fm = new float[64];
         test = new float[1];
+
+        bNewMsg = false;
     }
 
     private void Update()

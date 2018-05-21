@@ -35,8 +35,8 @@ public class TestLoader : MonoBehaviour
         print(originialVertices[0]);
         Mesh mesh = new Mesh();
         mesh.vertices = PlyLoaderDll.GetVertices(plyIntPtr);
-        mesh.uv = PlyLoaderDll.GetUvs(plyIntPtr);
-        mesh.normals = PlyLoaderDll.GetNormals(plyIntPtr);
+        //mesh.uv = PlyLoaderDll.GetUvs(plyIntPtr);
+        //mesh.normals = PlyLoaderDll.GetNormals(plyIntPtr);
         mesh.colors32 = PlyLoaderDll.GetColors(plyIntPtr);
         mesh.SetIndices(PlyLoaderDll.GetIndexs(plyIntPtr), MeshTopology.Triangles, 0, true);
         mesh.name = "mesh";
@@ -47,19 +47,7 @@ public class TestLoader : MonoBehaviour
         MeshFilter mf = go.AddComponent<MeshFilter>();
         mf.mesh = mesh;
         MeshRenderer mr = go.AddComponent<MeshRenderer>();
-        mr.material = new Material(Shader.Find("Unlit/Texture"));
-        string textureName = PlyLoaderDll.GetTextureName(plyIntPtr);
-        if (textureName != null && textureName.Length > 0)
-        {
-            string texturePath = "file://" + System.IO.Path.Combine(Application.streamingAssetsPath, textureName);
-            WWW www = new WWW(texturePath);
-            while (!www.isDone)
-            {
-            }
-            mr.material.mainTexture = www.texture;
-        }
-        else
-            mr.material = defaultMat;
+        mr.material = new Material(Shader.Find("Unlit/VertexColor"));
 
 //         go3 = GameObject.Instantiate(go);
 //         go3.name = "original";
@@ -75,7 +63,7 @@ public class TestLoader : MonoBehaviour
         }
         mf2.mesh = mesh;
         MeshRenderer mr2 = go2.AddComponent<MeshRenderer>();
-        mr2.material = defaultMat2;
+        mr2.material = new Material(Shader.Find("Unlit/VertexColor"));
         originialVertices2 = mesh.vertices;
 
         PlyLoaderDll.UnLoadPly(plyIntPtr);
