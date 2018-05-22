@@ -6,6 +6,7 @@ using System.Text;
 
 public class client : MonoBehaviour {
     public string msg, meshPath;
+    [SerializeField]
     float[] cmd, test;
     public float[] fm;
 
@@ -15,34 +16,41 @@ public class client : MonoBehaviour {
 
     public string topic;
 
+    public int currentId;
+
     private void HandleMessage(string message)
     {
-        //         var splittedStrings = message.Split(' ');
-        //         if (splittedStrings.Length != 3) return;
-        //         var x = float.Parse(splittedStrings[0]);
-        //         var y = float.Parse(splittedStrings[1]);
-        //         var z = float.Parse(splittedStrings[2]);
-        //         transform.position = new Vector3(x, y, z);
         msg = message;
+    }
+
+    void ParseMatrix(byte[] b)
+    {
+        currentId = int.Parse(msg.Substring(1, 1));
+        int matrixLen = int.Parse(msg.Substring(2));
+        fm = new float[matrixLen];
+        Buffer.BlockCopy(b, 0, fm, 0, 4 * matrixLen);
+    }
+
+    void ParseMeshPath(byte[] b)
+    {
+        currentId = int.Parse(msg.Substring(2, 1));
+        int meshNameLen = int.Parse(msg.Substring(3));
+        meshPath = Encoding.UTF8.GetString(b, 0, meshNameLen);
+        print(meshPath);
     }
 
     private void HandleFMessage(byte[] b)
     {
-        //         var splittedStrings = message.Split(' ');
-        //         if (splittedStrings.Length != 3) return;
-        //         var x = float.Parse(splittedStrings[0]);
-        //         var y = float.Parse(splittedStrings[1]);
-        //         var z = float.Parse(splittedStrings[2]);
-        //         transform.position = new Vector3(x, y, z);
         if (msg[0].Equals('s'))
         {
             Buffer.BlockCopy(b, 0, cmd, 0, 4);
         }
         else if (msg[0].Equals('m'))
         {
-            int len = int.Parse(msg.Substring(1));
-            fm = new float[len];
-            Buffer.BlockCopy(b, 0, fm, 0, 4 * len);
+            //             int len = int.Parse(msg.Substring(1));
+            //             fm = new float[len];
+            //             Buffer.BlockCopy(b, 0, fm, 0, 4 * len);
+            ParseMatrix(b);
         }
         else if (msg.Equals("mesh"))
         {
@@ -52,9 +60,10 @@ public class client : MonoBehaviour {
         else if (msg.Contains("nm"))
         {
             // receive mesh path
-            int len = int.Parse(msg.Substring(2));
-            meshPath = Encoding.UTF8.GetString(b, 0, len);
-            print(meshPath);
+            //             int len = int.Parse(msg.Substring(2));
+            //             meshPath = Encoding.UTF8.GetString(b, 0, len);
+            //             print(meshPath);
+            ParseMeshPath(b);
             //print(s[0]);
             //testLoadFunc(s);
         }
@@ -75,6 +84,7 @@ public class client : MonoBehaviour {
         test = new float[1];
 
         bNewMsg = false;
+        currentId = -1;
     }
 
     private void Update()

@@ -12,7 +12,7 @@ public class PLYPathLoader : MonoBehaviour {
 
     Mesh mesh;
 
-    Vector3[] originialVertices;
+    Vector3[] originalVertices;
     Color32[] origianlColors;
     int[] originalIndices;
     Matrix4x4 originalMatrix;
@@ -28,21 +28,25 @@ public class PLYPathLoader : MonoBehaviour {
         // update based on tracker's matrix
         mesh = GetComponent<MeshFilter>().mesh;
         Vector3[] vertices = mesh.vertices;
-        Vector3[] normals = mesh.normals;
+        //Vector3[] normals = mesh.normals;
 
         int i = 0;
-        Matrix4x4 curTracker = Matrix4x4.TRS(steamTracker.position, steamTracker.rotation, Vector3.one);
-        //print("originialVertices:" + originialVertices[0]);
-        while (i < vertices.Length)
+        if(steamTracker.gameObject.GetComponent<SteamVR_TrackedObject>().isValid)
         {
-            Vector3 VviveScale = originialVertices[i] * 0.001f;
-            VviveScale.z = -VviveScale.z;
-            vertices[i] = (curTracker * originalMatrix.inverse).MultiplyPoint(VviveScale);
-            i++;
+            Matrix4x4 curTracker = Matrix4x4.TRS(steamTracker.position, steamTracker.rotation, Vector3.one);
+            //print("originialVertices:" + originialVertices[0]);
+            while (i < Mathf.Min(65535, vertices.Length))
+            {
+                Vector3 VviveScale = originalVertices[i] * 0.001f;
+                VviveScale.z = -VviveScale.z;
+                vertices[i] = (curTracker * originalMatrix.inverse).MultiplyPoint(VviveScale);
+                i++;
+            }
+            print("after :" + vertices[0]);
+            mesh.vertices = vertices;
+            mesh.RecalculateNormals();
         }
-        //print("after diff:" + vertices[0]);
-        mesh.vertices = vertices;
-        mesh.RecalculateNormals();
+        
     }
 
     public void LoadMesh()
@@ -50,7 +54,7 @@ public class PLYPathLoader : MonoBehaviour {
         // read from file
         IntPtr plyIntPtr = PlyLoaderDll.LoadPly(zmqMeshClient.meshPath);
 
-        originialVertices = PlyLoaderDll.GetVertices(plyIntPtr);
+        originalVertices = PlyLoaderDll.GetVertices(plyIntPtr);
         origianlColors = PlyLoaderDll.GetColors(plyIntPtr);
         originalIndices = PlyLoaderDll.GetIndexs(plyIntPtr);
 
@@ -58,12 +62,36 @@ public class PLYPathLoader : MonoBehaviour {
 
         mesh = new Mesh();
         // assign to mesh
-        if (originialVertices != null)
-            mesh.vertices = originialVertices;
+        if (originalVertices != null)
+            if (originalVertices.Length > 65535)
+            {
+                Vector3[] tempVertices = new Vector3[65535];
+                Array.Copy(originalVertices, tempVertices, 65535);
+                mesh.vertices = tempVertices;
+            }
+            else
+                mesh.vertices = originalVertices;
         if (origianlColors != null)
-            mesh.colors32 = origianlColors;
+            if (origianlColors.Length > 65535)
+            {
+                Vector3[] tempColors = new Vector3[65535];
+                Array.Copy(origianlColors, tempColors, 65535);
+                mesh.vertices = tempColors;
+            }
+            else
+                mesh.colors32 = origianlColors;
         if (originalIndices != null)
-            mesh.SetIndices(originalIndices, MeshTopology.Triangles, 0, true);
+        {
+            if(originalIndices.Length > 65535)
+            {
+                int[] tempIndices = new int[65535];
+                Array.Copy(originalIndices, tempIndices, 65535);
+                mesh.SetIndices(tempIndices, MeshTopology.Triangles, 0, true);
+            }
+            else
+                mesh.SetIndices(originalIndices, MeshTopology.Triangles, 0, true);
+        }
+            
         mesh.name = "mesh";
         //mesh.RecalculateNormals();
 
@@ -73,6 +101,8 @@ public class PLYPathLoader : MonoBehaviour {
         mf.mesh = mesh;
         MeshRenderer mr = transform.gameObject.AddComponent<MeshRenderer>();
         mr.material = new Material(Shader.Find("Unlit/VertexColor"));
+
+        print("LoadMesh ing:" + originalVertices.Length + " vertices and " + originalIndices.Length + " faces");
     }
 
     public void LoadMatrix()
