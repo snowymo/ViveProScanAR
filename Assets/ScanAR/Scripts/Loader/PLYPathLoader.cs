@@ -12,6 +12,8 @@ public class PLYPathLoader : MonoBehaviour {
 
     Mesh mesh;
 
+    public Shader shader;
+
     Vector3[] originalVertices;
     Color32[] origianlColors;
     int[] originalIndices;
@@ -58,6 +60,8 @@ public class PLYPathLoader : MonoBehaviour {
         origianlColors = PlyLoaderDll.GetColors(plyIntPtr);
         originalIndices = PlyLoaderDll.GetIndexs(plyIntPtr);
 
+        print("LoadMesh ing:" + originalVertices.Length + " vertices and " + originalIndices.Length + " faces");
+
         PlyLoaderDll.UnLoadPly(plyIntPtr);
 
         mesh = new Mesh();
@@ -100,7 +104,7 @@ public class PLYPathLoader : MonoBehaviour {
         MeshFilter mf = transform.gameObject.AddComponent<MeshFilter>();
         mf.mesh = mesh;
         MeshRenderer mr = transform.gameObject.AddComponent<MeshRenderer>();
-        mr.material = new Material(Shader.Find("Unlit/VertexColor"));
+        mr.material = new Material(shader);
 
         print("LoadMesh ing:" + originalVertices.Length + " vertices and " + originalIndices.Length + " faces");
     }

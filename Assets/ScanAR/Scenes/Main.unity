@@ -202,9 +202,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   msg: 
   meshPath: 
+  cmd: []
+  test: []
   fm: []
   bNewMsg: 0
-  topic: m16
+  topic: m
+  currentId: 0
 --- !u!4 &535229474
 Transform:
   m_ObjectHideFlags: 0
@@ -437,9 +440,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   msg: 
   meshPath: 
+  cmd: []
+  test: []
   fm: []
   bNewMsg: 0
   topic: nm
+  currentId: 0
 --- !u!4 &1397157817
 Transform:
   m_ObjectHideFlags: 0

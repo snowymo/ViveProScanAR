@@ -54,3 +54,4 @@ MonoBehaviour:
   zmqMeshClient: {fileID: 0}
   zmqMatrixClient: {fileID: 0}
   steamTracker: {fileID: 0}
+  shader: {fileID: 4800000, guid: 9a61243d781be444b96633daa5a67f68, type: 3}
