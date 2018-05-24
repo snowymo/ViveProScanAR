@@ -36,9 +36,14 @@ public class ScanARCtrl : MonoBehaviour {
                 newscan.transform.GetComponent<PLYPathLoader>().zmqMatrixClient = zmqMatrixClient;
                 newscan.transform.GetComponent<PLYPathLoader>().steamTracker = steamTracker;
                 newscan.transform.GetComponent<PLYPathLoader>().LoadMatrix();
-                newscan.transform.GetComponent<PLYPathLoader>().LoadMesh();
-                scans.Add(newscan);
+                newscan.transform.GetComponent<PLYPathLoader>().LoadMeshes();
 
+                // we dont need the old one
+                if (scans.Count > 0)
+                    scans[scans.Count - 1].SetActive(false);
+
+                scans.Add(newscan);
+                
                 zmqMatrixClient.bNewMsg = false;
                 zmqMeshClient.bNewMsg = false;
 

@@ -168,7 +168,7 @@ Prefab:
         type: 2}
     - target: {fileID: 107946, guid: dc06161b6d97feb419f45f03b62e14b9, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: dc06161b6d97feb419f45f03b62e14b9, type: 2}
@@ -202,6 +202,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   msg: 
   meshPath: 
+  meshPaths: []
   cmd: []
   test: []
   fm: []
@@ -262,7 +263,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1829387881629046, guid: 043c7faf0fdcecd499d4424a614b2482, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 043c7faf0fdcecd499d4424a614b2482, type: 2}
@@ -362,7 +363,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1208473749644506, guid: 4f0ad1ecc2833664cbed67ac0d8c4bac, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4f0ad1ecc2833664cbed67ac0d8c4bac, type: 2}
@@ -440,6 +441,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   msg: 
   meshPath: 
+  meshPaths: []
   cmd: []
   test: []
   fm: []

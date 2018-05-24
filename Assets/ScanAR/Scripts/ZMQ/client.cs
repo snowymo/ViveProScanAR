@@ -6,6 +6,7 @@ using System.Text;
 
 public class client : MonoBehaviour {
     public string msg, meshPath;
+    public string[] meshPaths;
     [SerializeField]
     float[] cmd, test;
     public float[] fm;
@@ -35,8 +36,15 @@ public class client : MonoBehaviour {
     {
         currentId = int.Parse(msg.Substring(2, 1));
         int meshNameLen = int.Parse(msg.Substring(3));
-        meshPath = Encoding.UTF8.GetString(b, 0, meshNameLen);
-        print(meshPath);
+        string curmeshPath = Encoding.UTF8.GetString(b, 0, meshNameLen);
+        int pathAmt = int.Parse(Encoding.UTF8.GetString(b, meshNameLen, b.Length - meshNameLen));
+        meshPaths = new string[pathAmt];
+        for(int i = 0; i < pathAmt; i++)
+        {
+            meshPaths[i] = curmeshPath.Substring(0, curmeshPath.IndexOf('.')) + i.ToString() + ".ply";
+            print(meshPaths[i]);
+        }
+        
     }
 
     private void HandleFMessage(byte[] b)
