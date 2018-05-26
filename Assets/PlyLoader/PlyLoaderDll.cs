@@ -9,6 +9,9 @@ public class PlyLoaderDll : MonoBehaviour
     [DllImport("PlyLoader", CharSet = CharSet.Ansi)]
     public static extern IntPtr LoadPly(string fileName);
 
+    [DllImport("PlyLoader", CharSet = CharSet.Ansi)]
+    public static extern IntPtr LoadPlyDownSample(string fileName, int downsample);
+
     [DllImport("PlyLoader")]
     public static extern void UnLoadPly(IntPtr plyIntPtr);
 
@@ -104,6 +107,37 @@ public class PlyLoaderDll : MonoBehaviour
             resultList.Add(new Vector2(faceuvs[i*2], faceuvs[i*2 + 1]));
 
         return resultList.ToArray();
+    }
+
+    public static void GetDownSample(IntPtr plyIntPtr, ref Vector3[] vertices, ref Vector2[] uvs, float downsample)
+    {
+        
+        List<Vector3> vertresultList = new List<Vector3>();
+        List<Vector2> uvresultList = new List<Vector2>();
+
+        int count, count2;
+        IntPtr vertdatPtr = GetPlyVerts(plyIntPtr, out count);
+        if (count == 0)
+            return;
+        float[] verts = new float[count];
+        Marshal.Copy(vertdatPtr, verts, 0, count);
+
+        IntPtr uvdatPtr = GetPlyUvs(plyIntPtr, out count2);
+        float[] faceuvs = new float[count2];
+        Marshal.Copy(uvdatPtr, faceuvs, 0, count2);
+
+        for (int i = 0; i < count / 3; i++)
+        {
+            if(UnityEngine.Random.value >= downsample)
+            {
+                vertresultList.Add(new Vector3(verts[i * 3], verts[i * 3 + 1], verts[i * 3 + 2]));
+                uvresultList.Add(new Vector2(faceuvs[i * 2], faceuvs[i * 2 + 1]));
+            }
+        }
+
+        vertices = vertresultList.ToArray();
+        uvs = uvresultList.ToArray();
+
     }
 
     public static string GetTextureName(IntPtr plyIntPtr)

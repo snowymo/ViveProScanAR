@@ -7,6 +7,11 @@ using Valve.VR;
 public class TestLoader : MonoBehaviour
 {
     public string fileName;
+    public bool isAbsolute;
+    public string absFilePath;
+
+    public enum FuncType { LOADPLY, DOWNSP };
+    public FuncType funcType;
 
     public Material defaultMat, defaultMat2;
 
@@ -15,12 +20,23 @@ public class TestLoader : MonoBehaviour
     bool isFirstPositionCaught, isReady;
 
     Matrix4x4 ToriginalSecondController;
-
     public Matrix4x4 TsecondController;
+
 
     GameObject go,go2,go3;
 
     Vector3[] originialVertices, originialVertices2;
+
+    public Shader shader;
+
+    public int limitCount;
+    int[] indices;
+
+    List<GameObject> gos = new List<GameObject>();
+
+    float curTime, prevTime;
+
+    public float downsample;
 
     //public Transform test;
 
@@ -28,8 +44,9 @@ public class TestLoader : MonoBehaviour
 
     void loadPLYLocally()
     {
-        string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, fileName);
-        IntPtr plyIntPtr = PlyLoaderDll.LoadPly(filePath);
+        if(!isAbsolute)
+            absFilePath = System.IO.Path.Combine(Application.streamingAssetsPath, fileName);
+        IntPtr plyIntPtr = PlyLoaderDll.LoadPly(absFilePath);
 
         originialVertices = PlyLoaderDll.GetVertices(plyIntPtr);
         print(originialVertices[0]);
@@ -47,8 +64,8 @@ public class TestLoader : MonoBehaviour
         MeshFilter mf = go.AddComponent<MeshFilter>();
         mf.mesh = mesh;
         MeshRenderer mr = go.AddComponent<MeshRenderer>();
-        mr.material = new Material(Shader.Find("Unlit/VertexColor"));
-
+        //mr.material = new Material(Shader.Find("Unlit/VertexColor"));
+        mr.material = new Material(shader);
 //         go3 = GameObject.Instantiate(go);
 //         go3.name = "original";
 // 
@@ -69,6 +86,73 @@ public class TestLoader : MonoBehaviour
         PlyLoaderDll.UnLoadPly(plyIntPtr);
     }
 
+    void createMesh(int startIdx, int verticeCnt, ref Vector3[] vertex, ref Vector2[] uv, ref Texture2D texture)
+    {
+        Mesh mesh = new Mesh();
+        //mesh.vertices = new Vector3[verticeCnt];
+        
+        Vector3[] curV = new Vector3[verticeCnt];
+        Array.Copy(vertex, startIdx * limitCount, curV, 0, verticeCnt);
+        mesh.vertices = curV;
+
+        Vector2[] curUV = new Vector2[verticeCnt];
+        Array.Copy(uv, startIdx * limitCount, curUV, 0, verticeCnt);
+        mesh.uv = curUV;
+
+        //         for (int i = 0; i < verticeCnt; i++)
+        //         {
+        //             mesh.vertices[i] /= 1000f;       
+        //         }
+        if (indices.Length > verticeCnt)
+        {
+            int[] subindices = new int[verticeCnt];
+            Array.Copy(indices, subindices, verticeCnt);
+            mesh.SetIndices(subindices, MeshTopology.Points, 0);
+        }
+        else
+            mesh.SetIndices(indices, MeshTopology.Points, 0);
+        mesh.name = "mesh" + startIdx.ToString();
+
+        GameObject go = new GameObject("go" + startIdx.ToString());
+        go.transform.parent = transform;
+
+        MeshFilter mf = go.AddComponent<MeshFilter>();
+        mf.mesh = mesh;
+
+        MeshRenderer mr = go.AddComponent<MeshRenderer>();
+        mr.material = new Material(shader);
+        mr.material.mainTexture = texture;
+    }
+
+    void loadPLYDownSample()
+    {
+        if (!isAbsolute)
+            absFilePath = System.IO.Path.Combine(Application.streamingAssetsPath, fileName);
+        IntPtr plyIntPtr = PlyLoaderDll.LoadPlyDownSample(absFilePath, (int)(downsample*100));
+        string textPrefix = absFilePath.Substring(0, absFilePath.LastIndexOf('\\')+1);
+
+        Vector3[] vo = PlyLoaderDll.GetVertices(plyIntPtr);
+        Vector2[] uvo = PlyLoaderDll.GetUvs(plyIntPtr);
+        string textureName = "file://" + textPrefix + PlyLoaderDll.GetTextureName(plyIntPtr);
+        WWW www = new WWW(textureName);
+        while (!www.isDone)
+        {
+        }
+        Texture2D texture = www.texture;
+        
+//         Vector3[] vo = new Vector3[0];
+//         Vector2[] uvo = new Vector2[0];
+//         PlyLoaderDll.GetDownSample(plyIntPtr, ref vo, ref uvo, downsample);
+
+        PlyLoaderDll.UnLoadPly(plyIntPtr);
+
+        int meshCount = vo.Length / limitCount + 1;
+        for(int i = 0; i < meshCount; i++)
+        {
+            createMesh(i, Math.Min(limitCount, vo.Length - i * limitCount), ref vo, ref uvo, ref texture);
+        }
+    }
+
     // Use this for initialization
     void Start()
     {
@@ -76,9 +160,28 @@ public class TestLoader : MonoBehaviour
 
         isFirstPositionCaught = false;
 
-        loadPLYLocally();
+        indices = new int[65000];
+        for (int i = 0; i < 65000; i++)
+        {
+            indices[i] = i;
+        }
 
-        isReady = true;
+        prevTime = Time.realtimeSinceStartup;
+        switch (funcType)
+        {
+            case FuncType.LOADPLY:
+                loadPLYLocally();
+                isReady = true;
+                break;
+            case FuncType.DOWNSP:
+                loadPLYDownSample();
+                curTime = Time.realtimeSinceStartup;
+                print("took " + (curTime - prevTime) + "s");
+                break;
+            default:
+                break;
+        }
+        
 
         //ApplyScale(0.001f);
 

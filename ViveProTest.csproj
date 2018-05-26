@@ -463,6 +463,7 @@
     <Compile Include="Assets\ViveSR_Experience\Scripts\ViveSR_Experience_VRMode_SwitchMode.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\ScanAR\Scripts\Shaders\PointCloudShader.shader" />
     <None Include="Assets\ScanAR\Scripts\Shaders\SimpleVertex.shader" />
     <None Include="Assets\ScanAR\Scripts\Shaders\VertexColor.shader" />
     <None Include="Assets\SteamVR\InteractionSystem\Core\Shaders\SeeThru.shader" />
