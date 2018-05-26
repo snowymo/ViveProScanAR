@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ScanARCtrl : MonoBehaviour {
 
-    public client zmqMeshClient, zmqMatrixClient;
+    public client zmqMeshClient;
 
     public Transform steamTracker;
 
@@ -22,20 +22,15 @@ public class ScanARCtrl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(zmqMatrixClient.bNewMsg && zmqMeshClient.bNewMsg)
+		if(zmqMeshClient.bNewMsg)
         {
-
-
             // check packet id, they should be adjacent and larger than current one
-            if (((Mathf.Abs( zmqMatrixClient.currentId - zmqMeshClient.currentId) == 1) || (Mathf.Abs(zmqMatrixClient.currentId - zmqMeshClient.currentId) == 9))
-                && (Mathf.Max( zmqMatrixClient.currentId ,zmqMeshClient.currentId )> packetId))
+            if (zmqMeshClient.currentId> packetId)
             {
                 GameObject newscan = GameObject.Instantiate(loader);
                 newscan.transform.parent = transform;
                 newscan.transform.GetComponent<PLYPathLoader>().zmqMeshClient = zmqMeshClient;
-                newscan.transform.GetComponent<PLYPathLoader>().zmqMatrixClient = zmqMatrixClient;
                 newscan.transform.GetComponent<PLYPathLoader>().steamTracker = steamTracker;
-                newscan.transform.GetComponent<PLYPathLoader>().LoadMatrix();
                 newscan.transform.GetComponent<PLYPathLoader>().LoadMeshes();
 
                 // we dont need the old one
@@ -44,10 +39,9 @@ public class ScanARCtrl : MonoBehaviour {
 
                 scans.Add(newscan);
                 
-                zmqMatrixClient.bNewMsg = false;
                 zmqMeshClient.bNewMsg = false;
 
-                packetId = Mathf.Max(zmqMatrixClient.currentId, zmqMeshClient.currentId);
+                packetId = zmqMeshClient.currentId;
             }            
         }
 	}
