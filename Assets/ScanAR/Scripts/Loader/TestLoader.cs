@@ -128,11 +128,24 @@ public class TestLoader : MonoBehaviour
     {
         if (!isAbsolute)
             absFilePath = System.IO.Path.Combine(Application.streamingAssetsPath, fileName);
+
+
+
         IntPtr plyIntPtr = PlyLoaderDll.LoadPlyDownSample(absFilePath, (int)(downsample*100));
+
+        curTime = Time.realtimeSinceStartup;
+        print("LoadPlyDownSample took " + (curTime - prevTime) + "s");
+        prevTime = curTime;
+
         string textPrefix = absFilePath.Substring(0, absFilePath.LastIndexOf('\\')+1);
 
         Vector3[] vo = PlyLoaderDll.GetVertices(plyIntPtr);
         Vector2[] uvo = PlyLoaderDll.GetUvs(plyIntPtr);
+
+        curTime = Time.realtimeSinceStartup;
+        print("GetVertices and UVs took " + (curTime - prevTime) + "s");
+        prevTime = curTime;
+
         string textureName = "file://" + textPrefix + PlyLoaderDll.GetTextureName(plyIntPtr);
         WWW www = new WWW(textureName);
         while (!www.isDone)
@@ -151,11 +164,16 @@ public class TestLoader : MonoBehaviour
         {
             createMesh(i, Math.Min(limitCount, vo.Length - i * limitCount), ref vo, ref uvo, ref texture);
         }
+        curTime = Time.realtimeSinceStartup;
+        print("createMesh took " + (curTime - prevTime) + "s");
+        prevTime = curTime;
     }
 
     // Use this for initialization
     void Start()
     {
+        float startTime = Time.realtimeSinceStartup;
+        prevTime = Time.realtimeSinceStartup;
         isReady = false;
 
         isFirstPositionCaught = false;
@@ -166,7 +184,10 @@ public class TestLoader : MonoBehaviour
             indices[i] = i;
         }
 
-        prevTime = Time.realtimeSinceStartup;
+        curTime = Time.realtimeSinceStartup;
+        print("create indices took " + (curTime - prevTime) + "s");
+        prevTime = curTime;
+
         switch (funcType)
         {
             case FuncType.LOADPLY:
@@ -176,7 +197,7 @@ public class TestLoader : MonoBehaviour
             case FuncType.DOWNSP:
                 loadPLYDownSample();
                 curTime = Time.realtimeSinceStartup;
-                print("took " + (curTime - prevTime) + "s");
+                print("whole took " + (curTime- startTime) + "s");
                 break;
             default:
                 break;
