@@ -284,7 +284,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &912299663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -396,7 +396,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zmqMeshClient: {fileID: 1397157816}
-  zmqMatrixClient: {fileID: 535229473}
   steamTracker: {fileID: 912299665}
   loader: {fileID: 1562213171671928, guid: 52ee3b2cac63a0043a49fc09f78bf87b, type: 2}
 --- !u!4 &1021818330

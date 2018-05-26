@@ -18,6 +18,7 @@ public class ScanARCtrl : MonoBehaviour {
     void Start () {
         scans = new List<GameObject>();
         packetId = -1;
+        Utility.InitialIndices();
     }
 	
 	// Update is called once per frame
@@ -25,13 +26,17 @@ public class ScanARCtrl : MonoBehaviour {
 		if(zmqMeshClient.bNewMsg)
         {
             // check packet id, they should be adjacent and larger than current one
-            if (zmqMeshClient.currentId> packetId)
+            if ((zmqMeshClient.currentId> packetId) || (zmqMeshClient.currentId <= 1))
             {
+                packetId = zmqMeshClient.currentId;
+
                 GameObject newscan = GameObject.Instantiate(loader);
                 newscan.transform.parent = transform;
                 newscan.transform.GetComponent<PLYPathLoader>().zmqMeshClient = zmqMeshClient;
-                newscan.transform.GetComponent<PLYPathLoader>().steamTracker = steamTracker;
                 newscan.transform.GetComponent<PLYPathLoader>().LoadMeshes();
+                if (steamTracker != null)
+                    newscan.transform.GetComponent<PLYPathLoader>().steamTracker = steamTracker;
+                
 
                 // we dont need the old one
                 if (scans.Count > 0)
@@ -41,7 +46,7 @@ public class ScanARCtrl : MonoBehaviour {
                 
                 zmqMeshClient.bNewMsg = false;
 
-                packetId = zmqMeshClient.currentId;
+                
             }            
         }
 	}

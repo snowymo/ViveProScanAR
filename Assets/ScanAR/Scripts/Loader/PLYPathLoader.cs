@@ -22,18 +22,22 @@ public class PLYPathLoader : MonoBehaviour {
 
     List<GameObject> gos;
     List<PLYObj> plyObjs;
+    List<GameObject> pointGOs;
 
     public GameObject meshPrefab;
 
     //Mesh mesh;
 
     public Shader shader;
+    public Shader textureShader;
 
     float vivescale = 0.001f;//1f;//0.001f;
 
     public enum PLY_COORD { VIVE, TRACKER};
 
     public PLY_COORD plyCoordType;
+
+    public string davidPLYFileName;
 
     // Use this for initialization
     void Start () {
@@ -48,6 +52,8 @@ public class PLYPathLoader : MonoBehaviour {
         //Vector3[] normals = mesh.normals;
         if (gos == null)
             gos = new List<GameObject>();
+        if (pointGOs == null)
+            pointGOs = new List<GameObject>();
         if (plyObjs == null)
             plyObjs = new List<PLYObj>();
 
@@ -139,78 +145,137 @@ public class PLYPathLoader : MonoBehaviour {
         print("LoadMesh ing:" + plyObj.originalVertices.Length + " vertices and " + plyObj.originalIndices.Length + " faces");
     }
 
+    void createMesh(int startIdx, int verticeCnt, ref Vector3[] vertex, ref Vector2[] uv, ref Texture2D texture)
+    {
+        Mesh mesh = new Mesh();
+        //mesh.vertices = new Vector3[verticeCnt];
+
+        Vector3[] curV = new Vector3[verticeCnt];
+        Array.Copy(vertex, startIdx * Utility.limitCount, curV, 0, verticeCnt);
+        mesh.vertices = curV;
+
+        Vector2[] curUV = new Vector2[verticeCnt];
+        Array.Copy(uv, startIdx * Utility.limitCount, curUV, 0, verticeCnt);
+        mesh.uv = curUV;
+
+        //         for (int i = 0; i < verticeCnt; i++)
+        //         {
+        //             mesh.vertices[i] /= 1000f;       
+        //         }
+        if (Utility.indices.Length > verticeCnt)
+        {
+            int[] subindices = new int[verticeCnt];
+            Array.Copy(Utility.indices, subindices, verticeCnt);
+            mesh.SetIndices(subindices, MeshTopology.Points, 0);
+        }
+        else
+            mesh.SetIndices(Utility.indices, MeshTopology.Points, 0);
+        mesh.name = "mesh" + startIdx.ToString();
+
+        GameObject go = new GameObject("go" + startIdx.ToString());
+        go.transform.parent = transform;
+        if (pointGOs == null)
+            pointGOs = new List<GameObject>();
+        pointGOs.Add(go);
+
+        MeshFilter mf = go.AddComponent<MeshFilter>();
+        mf.mesh = mesh;
+
+        MeshRenderer mr = go.AddComponent<MeshRenderer>();
+        mr.material = new Material(textureShader);
+        mr.material.mainTexture = texture;
+    }
+
     public void LoadMeshes()
     {
         if(gos == null)
             gos = new List<GameObject>();
         if (plyObjs == null)
             plyObjs = new List<PLYObj>();
-
-        for (int i = 0; i < zmqMeshClient.meshPaths.Length; i++)
+        if (pointGOs == null)
+            pointGOs = new List<GameObject>();
+        // if we load from David, then load as point cloud
+        if (zmqMeshClient.meshPaths[0].Contains(davidPLYFileName))
         {
-            // read from file
-            IntPtr plyIntPtr = PlyLoaderDll.LoadPly(zmqMeshClient.meshPaths[i]);
+            string pathname = zmqMeshClient.meshPaths[0].Substring(0, zmqMeshClient.meshPaths[0].IndexOf(davidPLYFileName) + davidPLYFileName.Length) + ".ply";
+            IntPtr plyIntPtr = PlyLoaderDll.LoadPlyDownSample(pathname, (int)(Utility.downsample * 100));
 
-            PLYObj plyObj = new PLYObj();
+            if (plyIntPtr == null)
+                return;
+            string textPrefix = zmqMeshClient.meshPaths[0].Substring(0, pathname.LastIndexOf('\\') + 1);
 
-            plyObj.originalVertices = PlyLoaderDll.GetVertices(plyIntPtr);
-            plyObj.origianlColors = PlyLoaderDll.GetColors(plyIntPtr);
-            plyObj.originalIndices = PlyLoaderDll.GetIndexs(plyIntPtr);
+            Vector3[] vo = PlyLoaderDll.GetVertices(plyIntPtr);
+            Vector2[] uvo = PlyLoaderDll.GetUvs(plyIntPtr);
 
-            plyObjs.Add(plyObj);
-
-            print("LoadMesh ing:" + plyObj.originalVertices[0] + " vertices and " + plyObj.originalIndices[0] + " faces");
+            string textureName = "file://" + textPrefix + PlyLoaderDll.GetTextureName(plyIntPtr);
+            WWW www = new WWW(textureName);
+            while (!www.isDone)
+            {
+            }
+            Texture2D texture = www.texture;
 
             PlyLoaderDll.UnLoadPly(plyIntPtr);
 
-            // create gameobject and mesh to assign
-            GameObject go = Instantiate<GameObject>(meshPrefab, transform);
-            gos.Add(go);
-
-            Mesh mesh = new Mesh();
-            // assign to mesh
-            if (plyObj.originalVertices != null)
-                if (plyObj.originalVertices.Length > 65000)
-                {
-                    Vector3[] tempVertices = new Vector3[65000];
-                    Array.Copy(plyObj.originalVertices, tempVertices, 65000);
-                    mesh.vertices = tempVertices;
-                }
-                else
-                    mesh.vertices = plyObj.originalVertices;
-            if (plyObj.origianlColors != null)
-                if (plyObj.origianlColors.Length > 65000)
-                {
-                    Color32[] tempColors = new Color32[65000];
-                    Array.Copy(plyObj.origianlColors, tempColors, 65000);
-                    mesh.colors32 = tempColors;
-                }
-                else
-                    mesh.colors32 = plyObj.origianlColors;
-            if (plyObj.originalIndices != null)
+            int meshCount = vo.Length / Utility.limitCount + 1;
+            for (int i = 0; i < meshCount; i++)
             {
-                if (plyObj.originalIndices.Length > 65000 * 3)
-                {
-                    int[] tempIndices = new int[65000 * 3];
-                    Array.Copy(plyObj.originalIndices, tempIndices, 65000 * 3);
-                    mesh.SetIndices(tempIndices, MeshTopology.Triangles, 0, true);
-                }
-                else
-                    mesh.SetIndices(plyObj.originalIndices, MeshTopology.Triangles, 0, true);
+                createMesh(i, Math.Min(Utility.limitCount, vo.Length - i * Utility.limitCount), ref vo, ref uvo, ref texture);
             }
-
-            mesh.name = "mesh";
-            //mesh.RecalculateNormals();
-
-            // assign mesh to object itself
-            go.name = zmqMeshClient.meshPaths[i].Substring(zmqMeshClient.meshPaths[i].Length - 14, 14);
-            MeshFilter mf = go.AddComponent<MeshFilter>();
-            mf.mesh = mesh;
-            MeshRenderer mr = go.AddComponent<MeshRenderer>();
-            mr.material = new Material(shader);
-
-            print("LoadMesh ing:" + plyObj.originalVertices.Length + " vertices and " + plyObj.originalIndices.Length + " faces");
         }
+        // else if we load from OSR, then load as multiply vertices and colors pairs
+        else
+        {
+            for (int i = 0; i < zmqMeshClient.meshPaths.Length; i++)
+            {
+                // read from file
+                IntPtr plyIntPtr = PlyLoaderDll.LoadPly(zmqMeshClient.meshPaths[i]);
+
+                PLYObj plyObj = new PLYObj();
+
+                plyObj.originalVertices = PlyLoaderDll.GetVertices(plyIntPtr);
+                plyObj.origianlColors = PlyLoaderDll.GetColors(plyIntPtr);
+                plyObj.originalIndices = PlyLoaderDll.GetIndexs(plyIntPtr);
+
+                plyObjs.Add(plyObj);
+
+                print("LoadMesh ing:" + plyObj.originalVertices[0] + " vertices and " + plyObj.originalIndices[0] + " faces");
+
+                PlyLoaderDll.UnLoadPly(plyIntPtr);
+
+                // create gameobject and mesh to assign
+                GameObject go = Instantiate<GameObject>(meshPrefab, transform);
+                gos.Add(go);
+
+                Mesh mesh = new Mesh();
+                // assign to mesh
+                if (plyObj.originalVertices != null)
+                    mesh.vertices = plyObj.originalVertices;
+                if (plyObj.origianlColors != null)
+                    //                     if (plyObj.origianlColors.Length > 65000)
+                    //                     {
+                    //                         Color32[] tempColors = new Color32[65000];
+                    //                         Array.Copy(plyObj.origianlColors, tempColors, 65000);
+                    //                         mesh.colors32 = tempColors;
+                    //                     }
+                    //                     else
+                    mesh.colors32 = plyObj.origianlColors;
+                if (plyObj.originalIndices != null)
+                    mesh.SetIndices(plyObj.originalIndices, MeshTopology.Triangles, 0, true);
+
+                mesh.name = "mesh";
+                //mesh.RecalculateNormals();
+
+                // assign mesh to object itself
+                go.name = zmqMeshClient.meshPaths[i].Substring(zmqMeshClient.meshPaths[i].Length - 14, 14);
+                MeshFilter mf = go.AddComponent<MeshFilter>();
+                mf.mesh = mesh;
+                MeshRenderer mr = go.AddComponent<MeshRenderer>();
+                mr.material = new Material(shader);
+
+                print("LoadMesh ing:" + plyObj.originalVertices.Length + " vertices and " + plyObj.originalIndices.Length + " faces");
+            }
+        }
+        
         
     }
 
