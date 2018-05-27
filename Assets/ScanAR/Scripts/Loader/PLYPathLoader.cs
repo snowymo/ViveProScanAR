@@ -11,7 +11,7 @@ public class PLYPathLoader : MonoBehaviour {
         public Vector3[] originalVertices;
         public Color32[] origianlColors;
         public int[] originalIndices;
-        
+        public Vector2[] originalUVs;
     }
 
     public Matrix4x4 originalMatrix;
@@ -22,7 +22,7 @@ public class PLYPathLoader : MonoBehaviour {
 
     List<GameObject> gos;
     List<PLYObj> plyObjs;
-    List<GameObject> pointGOs;
+    //List<GameObject> pointGOs;
 
     public GameObject meshPrefab;
 
@@ -50,37 +50,33 @@ public class PLYPathLoader : MonoBehaviour {
         // update based on tracker's matrix
 
         //Vector3[] normals = mesh.normals;
-        if (gos == null)
-            gos = new List<GameObject>();
-        if (pointGOs == null)
-            pointGOs = new List<GameObject>();
-        if (plyObjs == null)
-            plyObjs = new List<PLYObj>();
+        initLists();
 
         if (steamTracker.gameObject.GetComponent<SteamVR_TrackedObject>().isValid)
         {
             Matrix4x4 curTracker = Matrix4x4.TRS(steamTracker.position, steamTracker.rotation, Vector3.one);
-            for(int goi = 0; goi < gos.Count; goi++)
+            for(int plyObji = 0; plyObji < plyObjs.Count; plyObji++)
             {
-                Mesh mesh = gos[goi].GetComponent<MeshFilter>().mesh;
+                Mesh mesh = gos[plyObji].GetComponent<MeshFilter>().mesh;
                 Vector3[] vertices = mesh.vertices;
                 //print("originialVertices:" + originialVertices[0]);
                 int i = 0;
                 while (i < Mathf.Min(65535, vertices.Length))
                 {
-                    Vector3 VviveScale = plyObjs[goi].originalVertices[i] * vivescale;
-                    VviveScale.z = -VviveScale.z;
+                    Vector3 VviveScale = plyObjs[plyObji].originalVertices[i] * vivescale;
+                    // looks like points don't need that?
+                    //if (zmqMeshClient.msgType == client.MsgType.MESHES)
+                        VviveScale.z = -VviveScale.z;
                     if (plyCoordType == PLY_COORD.VIVE)
                         vertices[i] = (curTracker * originalMatrix.inverse).MultiplyPoint(VviveScale);
                     else if (plyCoordType == PLY_COORD.TRACKER)
-                        vertices[i] = curTracker.MultiplyPoint(VviveScale);
+                        vertices[i] = (curTracker * originalMatrix).MultiplyPoint(VviveScale);
                     i++;
                 }
                 print("after :" + vertices[0]);
                 mesh.vertices = vertices;
-                mesh.RecalculateNormals();
+                //mesh.RecalculateNormals();
             }
-            
         }
         
     }
@@ -170,13 +166,18 @@ public class PLYPathLoader : MonoBehaviour {
         }
         else
             mesh.SetIndices(Utility.indices, MeshTopology.Points, 0);
+
+        PLYObj plyObj = new PLYObj();
+        plyObj.originalVertices = curV;
+        plyObj.originalUVs = curUV;
+        plyObjs.Add(plyObj);
+        print("LoadPoint ing:" + plyObj.originalVertices[0] + " pos");
+
         mesh.name = "mesh" + startIdx.ToString();
 
         GameObject go = new GameObject("go" + startIdx.ToString());
         go.transform.parent = transform;
-        if (pointGOs == null)
-            pointGOs = new List<GameObject>();
-        pointGOs.Add(go);
+        gos.Add(go);
 
         MeshFilter mf = go.AddComponent<MeshFilter>();
         mf.mesh = mesh;
@@ -186,23 +187,27 @@ public class PLYPathLoader : MonoBehaviour {
         mr.material.mainTexture = texture;
     }
 
-    public void LoadMeshes()
+    void initLists()
     {
-        if(gos == null)
+        if (gos == null)
             gos = new List<GameObject>();
         if (plyObjs == null)
             plyObjs = new List<PLYObj>();
-        if (pointGOs == null)
-            pointGOs = new List<GameObject>();
+    }
+
+    public void LoadMeshes()
+    {
+        initLists();
+
         // if we load from David, then load as point cloud
-        if (zmqMeshClient.meshPaths[0].Contains(davidPLYFileName))
+        if (zmqMeshClient.msgType == client.MsgType.POINTS)
         {
-            string pathname = zmqMeshClient.meshPaths[0].Substring(0, zmqMeshClient.meshPaths[0].IndexOf(davidPLYFileName) + davidPLYFileName.Length) + ".ply";
+            string pathname = zmqMeshClient.pcPath;
             IntPtr plyIntPtr = PlyLoaderDll.LoadPlyDownSample(pathname, (int)(Utility.downsample * 100));
 
             if (plyIntPtr == null)
                 return;
-            string textPrefix = zmqMeshClient.meshPaths[0].Substring(0, pathname.LastIndexOf('\\') + 1);
+            string textPrefix = pathname.Substring(0, pathname.LastIndexOf('\\') + 1);
 
             Vector3[] vo = PlyLoaderDll.GetVertices(plyIntPtr);
             Vector2[] uvo = PlyLoaderDll.GetUvs(plyIntPtr);
@@ -223,7 +228,7 @@ public class PLYPathLoader : MonoBehaviour {
             }
         }
         // else if we load from OSR, then load as multiply vertices and colors pairs
-        else
+        else if (zmqMeshClient.msgType == client.MsgType.MESHES)
         {
             for (int i = 0; i < zmqMeshClient.meshPaths.Length; i++)
             {
@@ -251,13 +256,6 @@ public class PLYPathLoader : MonoBehaviour {
                 if (plyObj.originalVertices != null)
                     mesh.vertices = plyObj.originalVertices;
                 if (plyObj.origianlColors != null)
-                    //                     if (plyObj.origianlColors.Length > 65000)
-                    //                     {
-                    //                         Color32[] tempColors = new Color32[65000];
-                    //                         Array.Copy(plyObj.origianlColors, tempColors, 65000);
-                    //                         mesh.colors32 = tempColors;
-                    //                     }
-                    //                     else
                     mesh.colors32 = plyObj.origianlColors;
                 if (plyObj.originalIndices != null)
                     mesh.SetIndices(plyObj.originalIndices, MeshTopology.Triangles, 0, true);
@@ -281,6 +279,9 @@ public class PLYPathLoader : MonoBehaviour {
 
     public void LoadMatrix()
     {
+        if (zmqMatrixClient.fm.Length == 0)
+            return;
+
         for(int i = 0; i < 16; i++)
         {
             originalMatrix[i % 4, i / 4] = zmqMatrixClient.fm[i];

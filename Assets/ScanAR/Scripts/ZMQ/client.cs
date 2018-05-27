@@ -7,6 +7,7 @@ using System.Text;
 public class client : MonoBehaviour {
     public string msg, meshPath;
     public string[] meshPaths;
+    public string pcPath;
     [SerializeField]
     float[] cmd, test;
     public float[] fm;
@@ -18,6 +19,9 @@ public class client : MonoBehaviour {
     public string topic;
 
     public int currentId;
+
+    public enum MsgType { MTX, MESHES, POINTS};
+    public MsgType msgType;
 
     private void HandleMessage(string message)
     {
@@ -34,7 +38,7 @@ public class client : MonoBehaviour {
 
     void ParseMeshPath(byte[] b)
     {
-        currentId = int.Parse(msg.Substring(2, 1));
+        currentId = int.Parse(msg.Substring(2, 1));// "nm[id]"
         int meshNameLen = int.Parse(msg.Substring(3));
         string curmeshPath = Encoding.UTF8.GetString(b, 0, meshNameLen);
         int pathAmt = int.Parse(Encoding.UTF8.GetString(b, meshNameLen, b.Length - meshNameLen));
@@ -44,7 +48,15 @@ public class client : MonoBehaviour {
             meshPaths[i] = curmeshPath.Substring(0, curmeshPath.IndexOf('.')) + i.ToString() + ".ply";
             print(meshPaths[i]);
         }
-        
+        msgType = MsgType.MESHES;
+    }
+
+    void ParsePointCloud(byte[] b)
+    {
+        currentId = int.Parse(msg.Substring(4, 1));// "nmpc[id]"
+        int meshNameLen = int.Parse(msg.Substring(5));
+        pcPath = Encoding.UTF8.GetString(b, 0, meshNameLen);
+        msgType = MsgType.POINTS;
     }
 
     private void HandleFMessage(byte[] b)
@@ -71,7 +83,12 @@ public class client : MonoBehaviour {
             //             int len = int.Parse(msg.Substring(2));
             //             meshPath = Encoding.UTF8.GetString(b, 0, len);
             //             print(meshPath);
-            ParseMeshPath(b);
+            if (msg.Contains("pc"))
+            {
+                ParsePointCloud(b);
+            }
+            else
+                ParseMeshPath(b);
             //print(s[0]);
             //testLoadFunc(s);
         }
@@ -88,7 +105,7 @@ public class client : MonoBehaviour {
         _netMqListener.Start();
 
         cmd = new float[1];
-        fm = new float[64];
+        fm = new float[0];
         test = new float[1];
 
         bNewMsg = false;
