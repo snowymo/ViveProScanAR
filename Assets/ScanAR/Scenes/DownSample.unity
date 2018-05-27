@@ -268,6 +268,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1338312523}
   - component: {fileID: 1338312522}
+  - component: {fileID: 1338312520}
   m_Layer: 0
   m_Name: plyLoader
   m_TagString: Untagged
@@ -275,13 +276,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1338312522
+--- !u!114 &1338312520
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1338312519}
   m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 625f6a9fff50237418c60146cd25013d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fileName: 
+  isAbsolute: 1
+  absFilePath: C:\\Scans\\currentScan.ply
+  shader: {fileID: 4800000, guid: 9a61243d781be444b96633daa5a67f68, type: 3}
+  limitCount: 65000
+--- !u!114 &1338312522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1338312519}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb86dea7acaec414c8a1b6252db112c8, type: 3}
   m_Name: 

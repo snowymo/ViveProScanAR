@@ -42,7 +42,10 @@ public class ScanARCtrl : MonoBehaviour {
                 newscan.transform.parent = transform;
                 newscan.transform.GetComponent<PLYPathLoader>().zmqMeshClient = zmqMeshClient;
                 newscan.transform.GetComponent<PLYPathLoader>().zmqMatrixClient = zmqMatrixClient;
+                float prevTime = Time.realtimeSinceStartup;
                 newscan.transform.GetComponent<PLYPathLoader>().LoadMeshes();
+                float curTime = Time.realtimeSinceStartup;
+                print("load meshes:" + (curTime - prevTime) + "s");
                 newscan.transform.GetComponent<PLYPathLoader>().LoadMatrix();
                 if (steamTracker != null)
                     newscan.transform.GetComponent<PLYPathLoader>().steamTracker = steamTracker;

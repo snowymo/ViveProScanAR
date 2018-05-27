@@ -48,6 +48,22 @@ public class PlyLoaderDll : MonoBehaviour
         return resultList.ToArray();
     }
 
+    public static Vector3[] GetRVertices(IntPtr plyIntPtr)
+    {
+        List<Vector3> resultList = new List<Vector3>();
+        int count;
+        IntPtr datPtr = GetPlyVerts(plyIntPtr, out count);
+        print("in Dll wrapper:" + count + " vertices");
+        if (count == 0)
+            return null;
+
+        float[] verts = new float[count*3];
+        Marshal.Copy(datPtr, verts, 0, count*3);
+        for (int i = 0; i < count; i++)
+            resultList.Add(new Vector3(verts[i * 3], verts[i * 3 + 1], verts[i * 3 + 2]));
+        return resultList.ToArray();
+    }
+
     public static Vector3[] GetNormals(IntPtr plyIntPtr)
     {
         List<Vector3> resultList = new List<Vector3>();
@@ -78,17 +94,50 @@ public class PlyLoaderDll : MonoBehaviour
         return resultList.ToArray();
     }
 
+    public static Color32[] GetRColors(IntPtr plyIntPtr)
+    {
+        List<Color32> resultList = new List<Color32>();
+        int count;
+        IntPtr datPtr = GetPlyColors(plyIntPtr, out count);
+        print("in Dll wrapper:" + count + " colors");
+        if (count == 0)
+            return null;
+
+        byte[] colors = new byte[count*3];
+        Marshal.Copy(datPtr, colors, 0, count*3);
+        for (int i = 0; i < count; i++)
+            resultList.Add(new Color32(colors[i * 3], colors[i * 3 + 1], colors[i * 3 + 2], 255));
+        return resultList.ToArray();
+    }
+
     public static int[] GetIndexs(IntPtr plyIntPtr)
     {
         List<int> resultList = new List<int>();
         int count;
         IntPtr datPtr = GetPlyIndexs(plyIntPtr, out count);
+        print("in Dll wrapper:" + count + " indices");
         if (count == 0)
             return null;
 
         int[] indexs = new int[count];
         Marshal.Copy(datPtr, indexs, 0, count);
         for (int i = 0; i < count; i++)
+            resultList.Add(indexs[i]);
+        return resultList.ToArray();
+    }
+
+    public static int[] GetRIndexs(IntPtr plyIntPtr)
+    {
+        List<int> resultList = new List<int>();
+        int count;
+        IntPtr datPtr = GetPlyIndexs(plyIntPtr, out count);
+        print("in Dll wrapper:" + count + " indices");
+        if (count == 0)
+            return null;
+
+        int[] indexs = new int[count*3];
+        Marshal.Copy(datPtr, indexs, 0, count*3);
+        for (int i = 0; i < count*3; i++)
             resultList.Add(indexs[i]);
         return resultList.ToArray();
     }

@@ -1,0 +1,343 @@
+﻿  PlyLoader.cpp
+PlyLoader/PlyLoader.cpp(316): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component_ocf.h(569): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component_ocf.h(567): note: while compiling class template member function 'int vcg::vertex::InfoOcf<Base>::Index(void) const'
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component_ocf.h(387): note: see reference to function template instantiation 'int vcg::vertex::InfoOcf<Base>::Index(void) const' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/container/derivation_chain.h(37): note: see reference to class template instantiation 'vcg::vertex::InfoOcf<Base>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component.h(173): note: see reference to class template instantiation 'vcg::Arity1<Base,A>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf
+          ]
+  d:\projects\uplyloader\unityplyloader\cppnativeplugin\plyloader\ml_mesh_type.h(10): note: see reference to class template instantiation 'vcg::vertex::Coord<vcg::Point3f,T>' being compiled
+          with
+          [
+              T=vcg::Arity1<vcg::vertex::EmptyCore<CUsedTypesO>,vcg::vertex::InfoOcf>
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/container/derivation_chain.h(43): note: see reference to class template instantiation 'vcg::vertex::Coord3m<vcg::Arity1<Base,A>>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component.h(323): note: see reference to class template instantiation 'vcg::Arity2<Base,A,B>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/container/derivation_chain.h(49): note: see reference to class template instantiation 'vcg::vertex::BitFlags<vcg::Arity2<Base,A,B>>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component.h(213): note: see reference to class template instantiation 'vcg::Arity3<Base,A,B,C>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags
+          ]
+  d:\projects\uplyloader\unityplyloader\cppnativeplugin\plyloader\ml_mesh_type.h(14): note: see reference to class template instantiation 'vcg::vertex::Normal<vcg::Point3f,T>' being compiled
+          with
+          [
+              T=vcg::Arity3<vcg::vertex::EmptyCore<CUsedTypesO>,vcg::vertex::InfoOcf,vcg::vertex::Coord3m,vcg::vertex::BitFlags>
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/container/derivation_chain.h(55): note: see reference to class template instantiation 'vcg::vertex::Normal3m<vcg::Arity3<Base,A,B,C>>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component.h(374): note: see reference to class template instantiation 'vcg::Arity4<Base,A,B,C,D>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component.h(394): note: see reference to class template instantiation 'vcg::vertex::Quality<float,TT>' being compiled
+          with
+          [
+              TT=vcg::Arity4<vcg::vertex::EmptyCore<CUsedTypesO>,vcg::vertex::InfoOcf,vcg::vertex::Coord3m,vcg::vertex::BitFlags,vcg::vertex::Normal3m>
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/container/derivation_chain.h(62): note: see reference to class template instantiation 'vcg::vertex::Qualityf<vcg::Arity4<Base,A,B,C,D>>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component.h(346): note: see reference to class template instantiation 'vcg::Arity5<Base,A,B,C,D,E>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component.h(362): note: see reference to class template instantiation 'vcg::vertex::Color<vcg::Color4b,TT>' being compiled
+          with
+          [
+              TT=vcg::Arity5<vcg::vertex::EmptyCore<CUsedTypesO>,vcg::vertex::InfoOcf,vcg::vertex::Coord3m,vcg::vertex::BitFlags,vcg::vertex::Normal3m,vcg::vertex::Qualityf>
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/container/derivation_chain.h(69): note: see reference to class template instantiation 'vcg::vertex::Color4b<vcg::Arity5<Base,A,B,C,D,E>>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component_ocf.h(273): note: see reference to class template instantiation 'vcg::Arity6<Base,A,B,C,D,E,F>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf,
+              F=vcg::vertex::Color4b
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/container/derivation_chain.h(77): note: see reference to class template instantiation 'vcg::vertex::VFAdjOcf<vcg::Arity6<Base,A,B,C,D,E,F>>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf,
+              F=vcg::vertex::Color4b
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component_ocf.h(406): note: see reference to class template instantiation 'vcg::Arity7<Base,A,B,C,D,E,F,G>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf,
+              F=vcg::vertex::Color4b,
+              G=vcg::vertex::VFAdjOcf
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/container/derivation_chain.h(85): note: see reference to class template instantiation 'vcg::vertex::MarkOcf<vcg::Arity7<Base,A,B,C,D,E,F,G>>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf,
+              F=vcg::vertex::Color4b,
+              G=vcg::vertex::VFAdjOcf
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component_ocf.h(382): note: see reference to class template instantiation 'vcg::Arity8<Base,A,B,C,D,E,F,G,H>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf,
+              F=vcg::vertex::Color4b,
+              G=vcg::vertex::VFAdjOcf,
+              H=vcg::vertex::MarkOcf
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component_ocf.h(400): note: see reference to class template instantiation 'vcg::vertex::TexCoordOcf<vcg::TexCoord2<float,1>,T>' being compiled
+          with
+          [
+              T=vcg::Arity8<vcg::vertex::EmptyCore<CUsedTypesO>,vcg::vertex::InfoOcf,vcg::vertex::Coord3m,vcg::vertex::BitFlags,vcg::vertex::Normal3m,vcg::vertex::Qualityf,vcg::vertex::Color4b,vcg::vertex::VFAdjOcf,vcg::vertex::MarkOcf>
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/container/derivation_chain.h(94): note: see reference to class template instantiation 'vcg::vertex::TexCoordfOcf<vcg::Arity8<Base,A,B,C,D,E,F,G,H>>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf,
+              F=vcg::vertex::Color4b,
+              G=vcg::vertex::VFAdjOcf,
+              H=vcg::vertex::MarkOcf
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component_ocf.h(431): note: see reference to class template instantiation 'vcg::Arity9<Base,A,B,C,D,E,F,G,H,I>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf,
+              F=vcg::vertex::Color4b,
+              G=vcg::vertex::VFAdjOcf,
+              H=vcg::vertex::MarkOcf,
+              I=vcg::vertex::TexCoordfOcf
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component_ocf.h(469): note: see reference to class template instantiation 'vcg::vertex::CurvatureOcf<float,T>' being compiled
+          with
+          [
+              T=vcg::Arity9<vcg::vertex::EmptyCore<CUsedTypesO>,vcg::vertex::InfoOcf,vcg::vertex::Coord3m,vcg::vertex::BitFlags,vcg::vertex::Normal3m,vcg::vertex::Qualityf,vcg::vertex::Color4b,vcg::vertex::VFAdjOcf,vcg::vertex::MarkOcf,vcg::vertex::TexCoordfOcf>
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/container/derivation_chain.h(103): note: see reference to class template instantiation 'vcg::vertex::CurvaturefOcf<vcg::Arity9<Base,A,B,C,D,E,F,G,H,I>>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf,
+              F=vcg::vertex::Color4b,
+              G=vcg::vertex::VFAdjOcf,
+              H=vcg::vertex::MarkOcf,
+              I=vcg::vertex::TexCoordfOcf
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component_ocf.h(485): note: see reference to class template instantiation 'vcg::Arity10<Base,A,B,C,D,E,F,G,H,I,J>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf,
+              F=vcg::vertex::Color4b,
+              G=vcg::vertex::VFAdjOcf,
+              H=vcg::vertex::MarkOcf,
+              I=vcg::vertex::TexCoordfOcf,
+              J=vcg::vertex::CurvaturefOcf
+          ]
+  d:\projects\uplyloader\unityplyloader\cppnativeplugin\plyloader\ml_mesh_type.h(18): note: see reference to class template instantiation 'vcg::vertex::CurvatureDirOcf<vcg::vertex::CurvatureDirTypeOcf<float>,T>' being compiled
+          with
+          [
+              T=vcg::Arity10<vcg::vertex::EmptyCore<CUsedTypesO>,vcg::vertex::InfoOcf,vcg::vertex::Coord3m,vcg::vertex::BitFlags,vcg::vertex::Normal3m,vcg::vertex::Qualityf,vcg::vertex::Color4b,vcg::vertex::VFAdjOcf,vcg::vertex::MarkOcf,vcg::vertex::TexCoordfOcf,vcg::vertex::CurvaturefOcf>
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/container/derivation_chain.h(113): note: see reference to class template instantiation 'vcg::vertex::CurvatureDirmOcf<vcg::Arity10<Base,A,B,C,D,E,F,G,H,I,J>>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf,
+              F=vcg::vertex::Color4b,
+              G=vcg::vertex::VFAdjOcf,
+              H=vcg::vertex::MarkOcf,
+              I=vcg::vertex::TexCoordfOcf,
+              J=vcg::vertex::CurvaturefOcf
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/component_ocf.h(529): note: see reference to class template instantiation 'vcg::Arity11<Base,A,B,C,D,E,F,G,H,I,J,K>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf,
+              F=vcg::vertex::Color4b,
+              G=vcg::vertex::VFAdjOcf,
+              H=vcg::vertex::MarkOcf,
+              I=vcg::vertex::TexCoordfOcf,
+              J=vcg::vertex::CurvaturefOcf,
+              K=vcg::vertex::CurvatureDirmOcf
+          ]
+  d:\projects\uplyloader\unityplyloader\cppnativeplugin\plyloader\ml_mesh_type.h(22): note: see reference to class template instantiation 'vcg::vertex::RadiusOcf<float,T>' being compiled
+          with
+          [
+              T=vcg::Arity11<vcg::vertex::EmptyCore<CUsedTypesO>,vcg::vertex::InfoOcf,vcg::vertex::Coord3m,vcg::vertex::BitFlags,vcg::vertex::Normal3m,vcg::vertex::Qualityf,vcg::vertex::Color4b,vcg::vertex::VFAdjOcf,vcg::vertex::MarkOcf,vcg::vertex::TexCoordfOcf,vcg::vertex::CurvaturefOcf,vcg::vertex::CurvatureDirmOcf>
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/container/derivation_chain.h(124): note: see reference to class template instantiation 'vcg::vertex::RadiusmOcf<vcg::Arity11<Base,A,B,C,D,E,F,G,H,I,J,K>>' being compiled
+          with
+          [
+              Base=vcg::vertex::EmptyCore<CUsedTypesO>,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf,
+              F=vcg::vertex::Color4b,
+              G=vcg::vertex::VFAdjOcf,
+              H=vcg::vertex::MarkOcf,
+              I=vcg::vertex::TexCoordfOcf,
+              J=vcg::vertex::CurvaturefOcf,
+              K=vcg::vertex::CurvatureDirmOcf
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/base.h(61): note: see reference to class template instantiation 'vcg::Arity12<vcg::vertex::EmptyCore<UserTypes>,A,B,C,D,E,F,G,H,I,J,K,L>' being compiled
+          with
+          [
+              UserTypes=CUsedTypesO,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf,
+              F=vcg::vertex::Color4b,
+              G=vcg::vertex::VFAdjOcf,
+              H=vcg::vertex::MarkOcf,
+              I=vcg::vertex::TexCoordfOcf,
+              J=vcg::vertex::CurvaturefOcf,
+              K=vcg::vertex::CurvatureDirmOcf,
+              L=vcg::vertex::RadiusmOcf
+          ]
+  D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\vcglib\vcg/simplex/vertex/base.h(190): note: see reference to class template instantiation 'vcg::VertexArityMax<UserTypes,A,B,C,D,E,F,G,H,I,J,K,L>' being compiled
+          with
+          [
+              UserTypes=CUsedTypesO,
+              A=vcg::vertex::InfoOcf,
+              B=vcg::vertex::Coord3m,
+              C=vcg::vertex::BitFlags,
+              D=vcg::vertex::Normal3m,
+              E=vcg::vertex::Qualityf,
+              F=vcg::vertex::Color4b,
+              G=vcg::vertex::VFAdjOcf,
+              H=vcg::vertex::MarkOcf,
+              I=vcg::vertex::TexCoordfOcf,
+              J=vcg::vertex::CurvaturefOcf,
+              K=vcg::vertex::CurvatureDirmOcf,
+              L=vcg::vertex::RadiusmOcf
+          ]
+  d:\projects\uplyloader\unityplyloader\cppnativeplugin\plyloader\ml_mesh_type.h(68): note: see reference to class template instantiation 'vcg::Vertex<CUsedTypesO,vcg::vertex::InfoOcf,vcg::vertex::Coord3m,vcg::vertex::BitFlags,vcg::vertex::Normal3m,vcg::vertex::Qualityf,vcg::vertex::Color4b,vcg::vertex::VFAdjOcf,vcg::vertex::MarkOcf,vcg::vertex::TexCoordfOcf,vcg::vertex::CurvaturefOcf,vcg::vertex::CurvatureDirmOcf,vcg::vertex::RadiusmOcf>' being compiled
+  plylib.cpp
+  rply.c
+     Creating library D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\x64\Release\PlyLoader.lib and object D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\x64\Release\PlyLoader.exp
+  Generating code
+  All 1302 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  PlyLoader.vcxproj -> D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\x64\Release\PlyLoader.dll
+  PlyLoader.vcxproj -> D:\Projects\UPlyLoader\UnityPlyLoader\CppNativePlugin\x64\Release\PlyLoader.pdb (Full PDB)

@@ -187,6 +187,47 @@ public class PLYPathLoader : MonoBehaviour {
         mr.material.mainTexture = texture;
     }
 
+    void createMesh(int startIdx, int verticeCnt, ref Vector3[] vertex, ref Color32[] color)
+    {
+        Mesh mesh = new Mesh();
+        //mesh.vertices = new Vector3[verticeCnt];
+
+        Vector3[] curV = new Vector3[verticeCnt];
+        Array.Copy(vertex, startIdx * Utility.limitCount, curV, 0, verticeCnt);
+        mesh.vertices = curV;
+
+        Color32[] curC = new Color32[verticeCnt];
+        Array.Copy(color, startIdx * Utility.limitCount, curC, 0, verticeCnt);
+        mesh.colors32 = curC;
+
+        if (Utility.indices.Length > verticeCnt)
+        {
+            int[] subindices = new int[verticeCnt];
+            Array.Copy(Utility.indices, subindices, verticeCnt);
+            mesh.SetIndices(subindices, MeshTopology.Points, 0);
+        }
+        else
+            mesh.SetIndices(Utility.indices, MeshTopology.Points, 0);
+        mesh.name = "mesh" + startIdx.ToString();
+
+        PLYObj plyObj = new PLYObj();
+
+        plyObj.originalVertices = curV;
+        plyObj.origianlColors = curC;
+
+        plyObjs.Add(plyObj);
+
+        GameObject go = new GameObject("go" + startIdx.ToString());
+        go.transform.parent = transform;
+        gos.Add(go);
+
+        MeshFilter mf = go.AddComponent<MeshFilter>();
+        mf.mesh = mesh;
+
+        MeshRenderer mr = go.AddComponent<MeshRenderer>();
+        mr.material = new Material(shader);
+    }
+
     void initLists()
     {
         if (gos == null)
@@ -202,29 +243,23 @@ public class PLYPathLoader : MonoBehaviour {
         // if we load from David, then load as point cloud
         if (zmqMeshClient.msgType == client.MsgType.POINTS)
         {
+            // new version, we load from rply dll, so that we have color rather than texture
             string pathname = zmqMeshClient.pcPath;
-            IntPtr plyIntPtr = PlyLoaderDll.LoadPlyDownSample(pathname, (int)(Utility.downsample * 100));
+            IntPtr plyIntPtr = PlyLoaderDll.LoadPly(pathname);
 
             if (plyIntPtr == null)
                 return;
-            string textPrefix = pathname.Substring(0, pathname.LastIndexOf('\\') + 1);
 
-            Vector3[] vo = PlyLoaderDll.GetVertices(plyIntPtr);
-            Vector2[] uvo = PlyLoaderDll.GetUvs(plyIntPtr);
-
-            string textureName = "file://" + textPrefix + PlyLoaderDll.GetTextureName(plyIntPtr);
-            WWW www = new WWW(textureName);
-            while (!www.isDone)
-            {
-            }
-            Texture2D texture = www.texture;
-
+            Mesh mesh = new Mesh();
+            Vector3[] vertices = PlyLoaderDll.GetRVertices(plyIntPtr);
+            Color32[] colors = PlyLoaderDll.GetRColors(plyIntPtr);
+            //int[] indices = PlyLoaderDll.GetRIndexs(plyIntPtr);
             PlyLoaderDll.UnLoadPly(plyIntPtr);
 
-            int meshCount = vo.Length / Utility.limitCount + 1;
+            int meshCount = vertices.Length / Utility.limitCount + 1;
             for (int i = 0; i < meshCount; i++)
             {
-                createMesh(i, Math.Min(Utility.limitCount, vo.Length - i * Utility.limitCount), ref vo, ref uvo, ref texture);
+                createMesh(i, Math.Min(Utility.limitCount, vertices.Length - i * Utility.limitCount), ref vertices, ref colors);
             }
         }
         // else if we load from OSR, then load as multiply vertices and colors pairs
@@ -298,5 +333,7 @@ public class PLYPathLoader : MonoBehaviour {
         originalMatrix[2, 0] = -originalMatrix[2, 0];
         originalMatrix[2, 1] = -originalMatrix[2, 1];
         originalMatrix[2, 3] = -originalMatrix[2, 3];
+
+        print(originalMatrix.ToString());
     }
 }
