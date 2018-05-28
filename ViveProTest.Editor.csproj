@@ -324,6 +324,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Editor\ObjExporter.cs" />
+    <Compile Include="Assets\Editor\ObjExporterScript.cs" />
     <Compile Include="Assets\SteamVR\Editor\SteamVR_Editor.cs" />
     <Compile Include="Assets\SteamVR\Editor\SteamVR_Preferences.cs" />
     <Compile Include="Assets\SteamVR\Editor\SteamVR_RenderModelEditor.cs" />

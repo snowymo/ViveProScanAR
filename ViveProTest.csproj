@@ -265,10 +265,12 @@
     <Compile Include="Assets\ScanAR\Scripts\HandShiftTransform.cs" />
     <Compile Include="Assets\ScanAR\Scripts\Loader\PLYPathLoader.cs" />
     <Compile Include="Assets\ScanAR\Scripts\Loader\TestLoader.cs" />
+    <Compile Include="Assets\ScanAR\Scripts\Loader\TestRplyLoader.cs" />
     <Compile Include="Assets\ScanAR\Scripts\ScanARCtrl.cs" />
     <Compile Include="Assets\ScanAR\Scripts\SteamVR\Record.cs" />
     <Compile Include="Assets\ScanAR\Scripts\SteamVR\Tracker.cs" />
     <Compile Include="Assets\ScanAR\Scripts\Utility.cs" />
+    <Compile Include="Assets\ScanAR\Scripts\ViveTest.cs" />
     <Compile Include="Assets\ScanAR\Scripts\ZMQ\client.cs" />
     <Compile Include="Assets\ScanAR\Scripts\ZMQ\NetMqListener.cs" />
     <Compile Include="Assets\ScanAR\Scripts\ZMQ\UdpClient.cs" />
