@@ -97,7 +97,9 @@ namespace Vive.Plugin.SR.Experience
                      touchpadGameObj = ViveSR_Experience.targetHand.transform.Find("BlankController_Hand" + ((ViveSR_Experience.targetHand.name == "Hand1") ? "1" : "2")).gameObject.transform.GetChild(0).gameObject.transform.Find("trackpad").transform.GetChild(0).gameObject;
                 }
                 catch (System.NullReferenceException e)
-                { Debug.Log(e); }
+                { 
+                    //Debug.Log(e); 
+                }
 
                 if (touchpadGameObj != null)
                 {

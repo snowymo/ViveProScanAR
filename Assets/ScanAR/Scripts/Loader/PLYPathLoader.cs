@@ -73,7 +73,7 @@ public class PLYPathLoader : MonoBehaviour {
                         vertices[i] = (curTracker * originalMatrix).MultiplyPoint(VviveScale);
                     i++;
                 }
-                print("after :" + vertices[0]);
+                //print("after :" + vertices[0]);
                 mesh.vertices = vertices;
                 //mesh.RecalculateNormals();
             }
