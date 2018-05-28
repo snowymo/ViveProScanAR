@@ -20,7 +20,7 @@ public class TestRplyLoader : MonoBehaviour {
 
     public int limitCount;
 
-    void createMesh(int startIdx, int verticeCnt, ref Vector3[] vertex, ref Color32[] color)
+    void createMesh(int startIdx, int verticeCnt, ref Vector3[] vertex, ref Color32[] color, int faceCnt, ref int[] faces)
     {
         Mesh mesh = new Mesh();
         //mesh.vertices = new Vector3[verticeCnt];
@@ -29,18 +29,29 @@ public class TestRplyLoader : MonoBehaviour {
         Array.Copy(vertex, startIdx * limitCount, curV, 0, verticeCnt);
         mesh.vertices = curV;
 
-        Color32[] curC = new Color32[verticeCnt];
-        Array.Copy(color, startIdx * limitCount, curC, 0, verticeCnt);
-        mesh.colors32 = curC;
+        
+        if (color != null) {
+            Color32[] curC = new Color32[verticeCnt];
+            Array.Copy(color, startIdx * limitCount, curC, 0, verticeCnt);
+            mesh.colors32 = curC;
+        }
 
-        if (indices.Length > verticeCnt)
+        if(faces != null)
         {
-            int[] subindices = new int[verticeCnt];
-            Array.Copy(indices, subindices, verticeCnt);
-            mesh.SetIndices(subindices, MeshTopology.Points, 0);
+            mesh.SetIndices(faces, MeshTopology.Triangles, 0);
         }
         else
-            mesh.SetIndices(indices, MeshTopology.Points, 0);
+        {
+            if (indices.Length > verticeCnt)
+            {
+                int[] subindices = new int[verticeCnt];
+                Array.Copy(indices, subindices, verticeCnt);
+                mesh.SetIndices(subindices, MeshTopology.Points, 0);
+            }
+            else
+                mesh.SetIndices(indices, MeshTopology.Points, 0);
+        }
+        
         mesh.name = "mesh" + startIdx.ToString();
 
         GameObject go = new GameObject("go" + startIdx.ToString());
@@ -64,13 +75,13 @@ public class TestRplyLoader : MonoBehaviour {
         Mesh mesh = new Mesh();
         Vector3[] vertices = PlyLoaderDll.GetRVertices(plyIntPtr);
         Color32[] colors = PlyLoaderDll.GetRColors(plyIntPtr);
-        //int[] indices = PlyLoaderDll.GetRIndexs(plyIntPtr);
+        int[] indices = PlyLoaderDll.GetRIndexs(plyIntPtr);
         PlyLoaderDll.UnLoadPly(plyIntPtr);
 
         int meshCount = vertices.Length / limitCount + 1;
         for (int i = 0; i < meshCount; i++)
         {
-            createMesh(i, Math.Min(limitCount, vertices.Length - i * limitCount), ref vertices, ref colors);
+            createMesh(i, Math.Min(limitCount, vertices.Length - i * limitCount), ref vertices, ref colors, indices.Length, ref indices);
         }
         
         
