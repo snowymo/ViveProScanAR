@@ -262,6 +262,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\PlyLoader\PlyLoaderDll.cs" />
+    <Compile Include="Assets\ScanAR\Scripts\David\SystemCommand.cs" />
     <Compile Include="Assets\ScanAR\Scripts\HandShiftTransform.cs" />
     <Compile Include="Assets\ScanAR\Scripts\Loader\PLYPathLoader.cs" />
     <Compile Include="Assets\ScanAR\Scripts\Loader\TestLoader.cs" />
