@@ -268,6 +268,7 @@
     <Compile Include="Assets\ScanAR\Scripts\Loader\TestLoader.cs" />
     <Compile Include="Assets\ScanAR\Scripts\Loader\TestRplyLoader.cs" />
     <Compile Include="Assets\ScanAR\Scripts\ScanARCtrl.cs" />
+    <Compile Include="Assets\ScanAR\Scripts\SteamVR\ControllerInput.cs" />
     <Compile Include="Assets\ScanAR\Scripts\SteamVR\Record.cs" />
     <Compile Include="Assets\ScanAR\Scripts\SteamVR\Tracker.cs" />
     <Compile Include="Assets\ScanAR\Scripts\Utility.cs" />

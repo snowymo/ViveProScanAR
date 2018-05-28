@@ -2,16 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR;
+using System.IO;
 
 public class ControllerInput : MonoBehaviour {
     public GameObject[] hands;
     public GameObject scannerController, secondController;
 
+    public ScanARCtrl scanARCtrl;
+
     SystemCommand sc;
 
     // Use this for initialization
     void Start () {
-        sc = new SystemCommand();	
+        sc = new SystemCommand();
+       
 	}
 	
 	// Update is called once per frame
@@ -55,6 +59,13 @@ public class ControllerInput : MonoBehaviour {
         if (scannerController.GetComponent<Valve.VR.InteractionSystem.Hand>().controller.GetPressDown(SteamVR_Controller.ButtonMask.Trigger)
             || secondController.GetComponent<Valve.VR.InteractionSystem.Hand>().controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
         {
+            // remove that scanfile
+            if (File.Exists(Utility.scanPath))
+            {
+                File.Delete(Utility.scanPath);
+            }
+            // mark I did a scan
+            scanARCtrl.isJustIssueScan = true;
             sc.IssueScan();
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR;
 using System;
+using System.IO;
 
 public class PLYPathLoader : MonoBehaviour {
 
@@ -33,7 +34,7 @@ public class PLYPathLoader : MonoBehaviour {
 
     float vivescale = 0.001f;//1f;//0.001f;
 
-    public enum PLY_COORD { VIVE, TRACKER};
+    public enum PLY_COORD { VIVE, TRACKER, TEST};
 
     public PLY_COORD plyCoordType;
 
@@ -71,6 +72,8 @@ public class PLYPathLoader : MonoBehaviour {
                         vertices[i] = (curTracker * originalMatrix.inverse).MultiplyPoint(VviveScale);
                     else if (plyCoordType == PLY_COORD.TRACKER)
                         vertices[i] = (curTracker * originalMatrix).MultiplyPoint(VviveScale);
+                    else if (plyCoordType == PLY_COORD.TEST)
+                        vertices[i] = originalMatrix.MultiplyPoint(VviveScale);
                     i++;
                 }
                 //print("after :" + vertices[0]);
@@ -312,6 +315,30 @@ public class PLYPathLoader : MonoBehaviour {
         
     }
 
+    public void LoadMeshesDirectly()
+    {
+        initLists();
+
+        // if we load from David, then load as point cloud
+        // new version, we load from rply dll, so that we have color rather than texture
+        IntPtr plyIntPtr = PlyLoaderDll.LoadPly(Utility.scanPath);
+
+        if (plyIntPtr == null)
+            return;
+
+        Mesh mesh = new Mesh();
+        Vector3[] vertices = PlyLoaderDll.GetRVertices(plyIntPtr);
+        Color32[] colors = PlyLoaderDll.GetRColors(plyIntPtr);
+        PlyLoaderDll.UnLoadPly(plyIntPtr);
+
+        int meshCount = vertices.Length / Utility.limitCount + 1;
+        for (int i = 0; i < meshCount; i++)
+        {
+            createMesh(i, Math.Min(Utility.limitCount, vertices.Length - i * Utility.limitCount), ref vertices, ref colors);
+        }
+       
+    }
+
     public void LoadMatrix()
     {
         if (zmqMatrixClient.fm.Length == 0)
@@ -321,6 +348,48 @@ public class PLYPathLoader : MonoBehaviour {
         {
             originalMatrix[i % 4, i / 4] = zmqMatrixClient.fm[i];
         }
+        // from david scale to unity scale
+        for (int i = 0; i < 3; i++)
+        {
+
+            originalMatrix[i, 3] /= 1000f;
+        }
+        // right hand to left hand
+        originalMatrix[0, 2] = -originalMatrix[0, 2];
+        originalMatrix[1, 2] = -originalMatrix[1, 2];
+        originalMatrix[2, 0] = -originalMatrix[2, 0];
+        originalMatrix[2, 1] = -originalMatrix[2, 1];
+        originalMatrix[2, 3] = -originalMatrix[2, 3];
+
+        print(originalMatrix.ToString());
+    }
+
+    // load transformVtoD from *.aln
+    // then apply tracker.inverse to save into originalMatrix, which right now is transformTtoD
+    public void LoadMatrixDirectly()
+    {
+        // load from Utility.calibrationFilePath
+        StreamReader reader = new StreamReader(Utility.calibrationFilePath);
+        string line;
+        // Read and display lines from the file until the end of the file is reached.
+        while ((line = reader.ReadLine()) != null)
+        {
+            Console.WriteLine(line);
+            if (line.Contains(Utility.calibrationIndicator))
+            {
+                line = reader.ReadLine();//#
+                for(int rowIdx = 0; rowIdx < 4; rowIdx++)
+                {
+                    line = reader.ReadLine(); // first line
+                    string[] firstRow = line.Split(new string[] { " " }, StringSplitOptions.None);
+                    for (int colIdx = 0; colIdx < firstRow.Length; colIdx++)
+                        originalMatrix[rowIdx,colIdx] = float.Parse(firstRow[colIdx]);
+                }
+                
+            }
+        }
+        reader.Close();
+
         // from david scale to unity scale
         for (int i = 0; i < 3; i++)
         {

@@ -205,6 +205,7 @@ MonoBehaviour:
   - {fileID: 1862182075}
   scannerController: {fileID: 0}
   secondController: {fileID: 0}
+  scanARCtrl: {fileID: 1021818329}
 --- !u!4 &527003584
 Transform:
   m_ObjectHideFlags: 0
@@ -451,6 +452,7 @@ MonoBehaviour:
   zmqMatrixClient: {fileID: 535229473}
   steamTracker: {fileID: 912299665}
   loader: {fileID: 1562213171671928, guid: 52ee3b2cac63a0043a49fc09f78bf87b, type: 2}
+  isJustIssueScan: 0
 --- !u!4 &1021818330
 Transform:
   m_ObjectHideFlags: 0

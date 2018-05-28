@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class ScanARCtrl : MonoBehaviour {
 
@@ -16,25 +17,28 @@ public class ScanARCtrl : MonoBehaviour {
 
     int packetId;
 
+    public bool isJustIssueScan;
+
     // Use this for initialization
     void Start () {
         scans = new List<GameObject>();
         packetId = -1;
         Utility.InitialIndices();
+        isJustIssueScan = false;
     }
-	
-	// Update is called once per frame
-	void Update () {
-		if(zmqMeshClient.bNewMsg)
+
+    void ZMQhandle()
+    {
+        if (zmqMeshClient.bNewMsg)
         {
-            if(zmqMeshClient.msgType == client.MsgType.POINTS)
+            if (zmqMeshClient.msgType == client.MsgType.POINTS)
             {
                 // then we need to have a matrix for T->D
                 if (!zmqMatrixClient.bNewMsg)
                     return;
             }
             // check packet id, they should be adjacent and larger than current one
-            if ((zmqMeshClient.currentId> packetId) || (zmqMeshClient.currentId <= 1))
+            if ((zmqMeshClient.currentId > packetId) || (zmqMeshClient.currentId <= 1))
             {
                 packetId = zmqMeshClient.currentId;
 
@@ -61,7 +65,7 @@ public class ScanARCtrl : MonoBehaviour {
                         scans[scans.Count - 2].SetActive(false);
                 }
 
-                if(zmqMeshClient.msgType == client.MsgType.MESHES)
+                if (zmqMeshClient.msgType == client.MsgType.MESHES)
                 {
                     // disable previous meshes and latest point cloud
                     if (scans[scans.Count - 1].transform.GetComponent<PLYPathLoader>().zmqMeshClient.msgType == client.MsgType.POINTS)
@@ -69,11 +73,44 @@ public class ScanARCtrl : MonoBehaviour {
                 }
 
                 scans.Add(newscan);
-                
+
                 zmqMeshClient.bNewMsg = false;
                 zmqMatrixClient.bNewMsg = false;
-                
-            }            
+
+            }
         }
+    }
+
+    // do what DavidLoader did
+    void dllHandle()
+    {
+        // check if the file exist
+        if (isJustIssueScan && File.Exists(Utility.scanPath))
+        {
+            isJustIssueScan = false;
+
+            // load the ply 
+            GameObject newscan = GameObject.Instantiate(loader);
+            newscan.transform.parent = transform;
+            float prevTime = Time.realtimeSinceStartup;
+            newscan.transform.GetComponent<PLYPathLoader>().plyCoordType = PLYPathLoader.PLY_COORD.TEST;
+            newscan.transform.GetComponent<PLYPathLoader>().LoadMeshesDirectly();
+            float curTime = Time.realtimeSinceStartup;
+            print("load meshes:" + (curTime - prevTime) + "s");
+            newscan.transform.GetComponent<PLYPathLoader>().LoadMatrixDirectly();
+            if (steamTracker != null)
+                newscan.transform.GetComponent<PLYPathLoader>().steamTracker = steamTracker;
+            scans.Add(newscan);
+
+            // move that to session folder
+
+            // render it with correct transform
+        }
+
+    }
+	
+	// Update is called once per frame
+	void Update () {
+        dllHandle();
 	}
 }
