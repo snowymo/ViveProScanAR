@@ -20,7 +20,7 @@ public class TestRplyLoader : MonoBehaviour {
 
     public int limitCount;
 
-    void createMesh(int startIdx, int verticeCnt, ref Vector3[] vertex, ref Color32[] color, int faceCnt, ref int[] faces)
+    void createMesh(int startIdx, int verticeCnt, ref Vector3[] vertex, ref Color32[] color, int faceCnt, ref uint[] faces)
     {
         Mesh mesh = new Mesh();
         //mesh.vertices = new Vector3[verticeCnt];
@@ -35,10 +35,14 @@ public class TestRplyLoader : MonoBehaviour {
             Array.Copy(color, startIdx * limitCount, curC, 0, verticeCnt);
             mesh.colors32 = curC;
         }
-
+        int[] ifaces = new int[faces.Length];
+        for(int i = 0; i < faces.Length; i++)
+        {
+            ifaces[i] = Convert.ToInt32( faces[i]);
+        }
         if(faces != null)
         {
-            mesh.SetIndices(faces, MeshTopology.Triangles, 0);
+            mesh.SetIndices(ifaces, MeshTopology.Triangles, 0);
         }
         else
         {
@@ -75,7 +79,7 @@ public class TestRplyLoader : MonoBehaviour {
         Mesh mesh = new Mesh();
         Vector3[] vertices = PlyLoaderDll.GetRVertices(plyIntPtr);
         Color32[] colors = PlyLoaderDll.GetRColors(plyIntPtr);
-        int[] indices = PlyLoaderDll.GetRIndexs(plyIntPtr);
+        uint[] indices = PlyLoaderDll.GetRIndexs(plyIntPtr);
         PlyLoaderDll.UnLoadPly(plyIntPtr);
 
         int meshCount = vertices.Length / limitCount + 1;

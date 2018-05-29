@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
+using System;
+
 public class ScanARCtrl : MonoBehaviour {
 
     public client zmqMeshClient;
@@ -20,12 +22,23 @@ public class ScanARCtrl : MonoBehaviour {
 
     public bool isJustIssueScan;
 
-    // Use this for initialization
-    void Start () {
+    // osr related
+    IntPtr OSRdata, curAddedScan;
+    int scanAmount; // increase by one if scan new, decrease by one if integrated
+    Vector3[] integratedVerts;
+    Color32[] integratedColors;
+    uint[] integratedFaces;
+
+
+        // Use this for initialization
+        void Start () {
         scans = new List<GameObject>();
         packetId = -1;
         Utility.InitialIndices();
         isJustIssueScan = false;
+
+        OSRdata = OSRDLL.CreateOSRData();
+        scanAmount = 0;
     }
 
     void ZMQhandle()
@@ -82,6 +95,20 @@ public class ScanARCtrl : MonoBehaviour {
         }
     }
 
+    public void IntegrateScan()
+    {
+        OSRDLL.OSRIntegrate(OSRdata, curAddedScan, ref integratedVerts, ref integratedColors, ref integratedFaces);
+        --scanAmount;
+
+    }
+
+    public void RegisterScan()
+    {
+        Matrix4x4 resTrans = Matrix4x4.identity;
+        OSRDLL.OSRRegister(OSRdata, curAddedScan, ref resTrans);
+        print("after Register() " + resTrans.ToString("F3"));
+    }
+
     // do what DavidLoader did
     void dllHandle()
     {
@@ -114,6 +141,11 @@ public class ScanARCtrl : MonoBehaviour {
             // move that to session folder, it is fine not to do it now
 
             // render it with correct transform, get the calibration elsewhere
+
+            // IntPtr OSRAddScan(IntPtr osrData, Vector3[] vertices, Color32[] colors, uint[] faces, Matrix4x4 mTransform)
+            PLYPathLoader ppl = newscan.transform.GetComponent<PLYPathLoader>();
+            curAddedScan = OSRDLL.OSRAddScan(OSRdata, ppl.rawScanVertices, ppl.rawScanColors, ppl.rawScanFaces, ppl.originalSCtoDMatrix);
+            ++scanAmount;
         }
 
     }
@@ -122,4 +154,9 @@ public class ScanARCtrl : MonoBehaviour {
 	void Update () {
         dllHandle();
 	}
+
+    private void OnApplicationQuit()
+    {
+        OSRDLL.DestroyOSRData(OSRdata);
+    }
 }

@@ -126,19 +126,20 @@ public class PlyLoaderDll : MonoBehaviour
         return resultList.ToArray();
     }
 
-    public static int[] GetRIndexs(IntPtr plyIntPtr)
+    public static uint[] GetRIndexs(IntPtr plyIntPtr)
     {
-        List<int> resultList = new List<int>();
+        List<uint> resultList = new List<uint>();
         int count;
         IntPtr datPtr = GetPlyIndexs(plyIntPtr, out count);
         print("in Dll wrapper:" + count + " indices");
         if (count == 0)
             return null;
 
-        int[] indexs = new int[count*3];
-        Marshal.Copy(datPtr, indexs, 0, count*3);
+        //uint[] indexs = new uint[count*3];
+        int[] temp = new int[count * 3];
+        Marshal.Copy(datPtr, temp, 0, count*3);
         for (int i = 0; i < count*3; i++)
-            resultList.Add(indexs[i]);
+            resultList.Add(Convert.ToUInt32(temp[i]));
         return resultList.ToArray();
     }
 

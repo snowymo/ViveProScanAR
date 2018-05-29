@@ -15,6 +15,10 @@ public class PLYPathLoader : MonoBehaviour {
         public Vector2[] originalUVs;
     }
 
+    public Vector3[] rawScanVertices;
+    public Color32[] rawScanColors;
+    public uint[] rawScanFaces;
+
     public Matrix4x4 originalMatrix, originalSCtoDMatrix, originalSTtoDMatrix;
 
     public client zmqMeshClient, zmqMatrixClient;
@@ -346,14 +350,15 @@ public class PLYPathLoader : MonoBehaviour {
             return;
 
         Mesh mesh = new Mesh();
-        Vector3[] vertices = PlyLoaderDll.GetRVertices(plyIntPtr);
-        Color32[] colors = PlyLoaderDll.GetRColors(plyIntPtr);
+        rawScanVertices = PlyLoaderDll.GetRVertices(plyIntPtr);
+        rawScanColors = PlyLoaderDll.GetRColors(plyIntPtr);
+        rawScanFaces = PlyLoaderDll.GetRIndexs(plyIntPtr);
         PlyLoaderDll.UnLoadPly(plyIntPtr);
 
-        int meshCount = vertices.Length / Utility.limitCount + 1;
+        int meshCount = rawScanVertices.Length / Utility.limitCount + 1;
         for (int i = 0; i < meshCount; i++)
         {
-            createMesh(i, Math.Min(Utility.limitCount, vertices.Length - i * Utility.limitCount), ref vertices, ref colors);
+            createMesh(i, Math.Min(Utility.limitCount, rawScanVertices.Length - i * Utility.limitCount), ref rawScanVertices, ref rawScanColors);
         }
        
     }

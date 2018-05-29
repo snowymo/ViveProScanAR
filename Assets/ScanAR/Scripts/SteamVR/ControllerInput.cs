@@ -74,5 +74,23 @@ public class ControllerInput : MonoBehaviour {
             scanARCtrl.isJustIssueScan = true;
             sc.IssueScan();
         }
+
+        // for integration
+        if (secondhand != null && secondhand.controller != null
+           && secondhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+        {
+            // second controller trigger for integration
+            scanARCtrl.IntegrateScan();
+        }
+
+        // for register
+        if (secondhand != null && secondhand.controller != null
+         && secondhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
+        {
+            // second controller touchpad for register
+            scanARCtrl.RegisterScan();
+        }
+
+
     }
 }
