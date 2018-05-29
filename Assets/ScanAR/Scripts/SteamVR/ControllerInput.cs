@@ -48,6 +48,7 @@ public class ControllerInput : MonoBehaviour {
             }
 
             scanARCtrl.secondController = secondController.transform;
+            scanARCtrl.scanController = scannerController.transform;
         }
     }
 

@@ -20,5 +20,7 @@ public class Utility {
     }
     public static string calibrationFilePath = "D:\\Projects\\OnlineSurfaceReconstruction\\build_msvc14_64\\Calibration.aln";
     public static string calibrationIndicator = "scan.ply";
+    public static string calibScanControllerIndicator = "scanControllerToDavid.ply";
+    public static string calibScanTrackerIndicator = "scanTrackerToDavid.ply";
     public static string scanPath = "D:\\Scans\\currentScan.ply";
 }

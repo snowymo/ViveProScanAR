@@ -7,7 +7,7 @@ public class Trackers : MonoBehaviour {
 
     public int TrackerAmount;
 
-    public GameObject secondTracker;
+    public GameObject secondTracker, scanTracker;
 
     List<GameObject> trackers;
 
@@ -49,6 +49,8 @@ public class Trackers : MonoBehaviour {
         {
             secondTracker = trackers[secondTrackerIdx];
             secondTracker.name = "secondTracker";
+            scanTracker = trackers[trackers.Count - 1 - secondTrackerIdx];
+            scanTracker.name = "scanTracker";
         }
         
 

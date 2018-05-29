@@ -387,7 +387,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3658f52ec2074924e8c4389119a69f43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TrackerAmount: 1
+  TrackerAmount: 2
   secondTracker: {fileID: 0}
 --- !u!1001 &933726703
 Prefab:

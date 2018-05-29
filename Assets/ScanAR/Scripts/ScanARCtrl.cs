@@ -10,6 +10,7 @@ public class ScanARCtrl : MonoBehaviour {
     public client zmqMatrixClient;
 
     public Transform steamTracker, secondController;
+    public Transform scanController;
 
     public GameObject loader;
 
@@ -96,8 +97,12 @@ public class ScanARCtrl : MonoBehaviour {
             //newscan.transform.GetComponent<PLYPathLoader>().plyCoordType = PLYPathLoader.PLY_COORD.TEST;
             if (steamTracker.gameObject.GetComponent<Trackers>().secondTracker != null)
                 newscan.transform.GetComponent<PLYPathLoader>().steamTracker = steamTracker.gameObject.GetComponent<Trackers>().secondTracker.transform;
+            if (steamTracker.gameObject.GetComponent<Trackers>().scanTracker != null)
+                newscan.transform.GetComponent<PLYPathLoader>().scanTracker = steamTracker.gameObject.GetComponent<Trackers>().scanTracker.transform;
             if (secondController != null)
                 newscan.transform.GetComponent<PLYPathLoader>().secondaryController = secondController;
+            if (scanController != null)
+                newscan.transform.GetComponent<PLYPathLoader>().scanController = scanController;
 
             newscan.transform.GetComponent<PLYPathLoader>().LoadMeshesDirectly();
             float curTime = Time.realtimeSinceStartup;

@@ -15,12 +15,12 @@ public class PLYPathLoader : MonoBehaviour {
         public Vector2[] originalUVs;
     }
 
-    public Matrix4x4 originalMatrix;
+    public Matrix4x4 originalMatrix, originalSCtoDMatrix, originalSTtoDMatrix;
 
     public client zmqMeshClient, zmqMatrixClient;
 
-    public Transform steamTracker;
-    public Transform secondaryController;
+    public Transform steamTracker, scanTracker;
+    public Transform secondaryController,scanController;
     public Matrix4x4 initialSecController, initialSecTracker;
 
     List<GameObject> gos;
@@ -36,7 +36,7 @@ public class PLYPathLoader : MonoBehaviour {
 
     float vivescale = 0.001f;//1f;//0.001f;
 
-    public enum PLY_COORD { VIVE, TRACKER, TEST};
+    public enum PLY_COORD { VIVE, TRACKER, TEST, BOTH};
 
     public PLY_COORD plyCoordType;
 
@@ -57,6 +57,9 @@ public class PLYPathLoader : MonoBehaviour {
         {
             Matrix4x4 curTracker = Matrix4x4.TRS(steamTracker.position, steamTracker.rotation, Vector3.one);
             Matrix4x4 curSecController = Matrix4x4.TRS(secondaryController.position, secondaryController.rotation, Vector3.one);
+
+            Matrix4x4 curScanController = Matrix4x4.TRS(scanController.position, scanController.rotation, Vector3.one);
+            Matrix4x4 curScanTracker = Matrix4x4.TRS(scanTracker.position, scanTracker.rotation, Vector3.one);
             for (int plyObji = 0; plyObji < plyObjs.Count; plyObji++)
             {
                 Mesh mesh = gos[plyObji].GetComponent<MeshFilter>().mesh;
@@ -75,6 +78,14 @@ public class PLYPathLoader : MonoBehaviour {
                         vertices[i] = (curTracker * initialSecTracker.inverse * originalMatrix).MultiplyPoint(VviveScale);
                     else if (plyCoordType == PLY_COORD.TEST)
                         vertices[i] = (curSecController * initialSecController.inverse * originalMatrix).MultiplyPoint(VviveScale);
+                    else if (plyCoordType == PLY_COORD.BOTH)
+                    {
+                        // calculate average
+                        Vector3 scVertex = (curTracker * initialSecTracker.inverse * curScanController * originalSCtoDMatrix).MultiplyPoint(VviveScale);
+                        Vector3 stVertex = (curTracker * initialSecTracker.inverse * curScanTracker * originalSTtoDMatrix).MultiplyPoint(VviveScale);
+                        vertices[i] = (scVertex + stVertex) / 2f;
+                    }
+                        
                     i++;
                 }
                 //print("after :" + vertices[0]);
@@ -385,8 +396,28 @@ public class PLYPathLoader : MonoBehaviour {
                     string[] firstRow = line.Split(new string[] { " " }, StringSplitOptions.None);
                     for (int colIdx = 0; colIdx < firstRow.Length; colIdx++)
                         originalMatrix[rowIdx,colIdx] = float.Parse(firstRow[colIdx]);
+                } 
+            }else if (line.Contains(Utility.calibScanControllerIndicator))
+            {
+                line = reader.ReadLine();//#
+                for (int rowIdx = 0; rowIdx < 4; rowIdx++)
+                {
+                    line = reader.ReadLine(); // first line
+                    string[] firstRow = line.Split(new string[] { " " }, StringSplitOptions.None);
+                    for (int colIdx = 0; colIdx < firstRow.Length; colIdx++)
+                        originalSCtoDMatrix[rowIdx, colIdx] = float.Parse(firstRow[colIdx]);
                 }
-                
+            }
+            else if (line.Contains(Utility.calibScanTrackerIndicator))
+            {
+                line = reader.ReadLine();//#
+                for (int rowIdx = 0; rowIdx < 4; rowIdx++)
+                {
+                    line = reader.ReadLine(); // first line
+                    string[] firstRow = line.Split(new string[] { " " }, StringSplitOptions.None);
+                    for (int colIdx = 0; colIdx < firstRow.Length; colIdx++)
+                        originalSTtoDMatrix[rowIdx, colIdx] = float.Parse(firstRow[colIdx]);
+                }
             }
         }
         reader.Close();
@@ -396,16 +427,30 @@ public class PLYPathLoader : MonoBehaviour {
         {
 
             originalMatrix[i, 3] /= 1000f;
+            originalSCtoDMatrix[i, 3] /= 1000f;
+            originalSTtoDMatrix[i, 3] /= 1000f;
         }
         // right hand to left hand
-        originalMatrix[0, 2] = -originalMatrix[0, 2];
-        originalMatrix[1, 2] = -originalMatrix[1, 2];
-        originalMatrix[2, 0] = -originalMatrix[2, 0];
-        originalMatrix[2, 1] = -originalMatrix[2, 1];
-        originalMatrix[2, 3] = -originalMatrix[2, 3];
+        originalMatrix[0, 2] *= -1f;
+        originalMatrix[1, 2] *= -1f;
+        originalMatrix[2, 0] *= -1f;
+        originalMatrix[2, 1] *= -1f;
+        originalMatrix[2, 3] *= -1f;
+
+        originalSCtoDMatrix[0, 2] *= -1f;
+        originalSCtoDMatrix[1, 2] *= -1f;
+        originalSCtoDMatrix[2, 0] *= -1f;
+        originalSCtoDMatrix[2, 1] *= -1f;
+        originalSCtoDMatrix[2, 3] *= -1f;
+
+        originalSTtoDMatrix[0, 2] *= -1f;
+        originalSTtoDMatrix[1, 2] *= -1f;
+        originalSTtoDMatrix[2, 0] *= -1f;
+        originalSTtoDMatrix[2, 1] *= -1f;
+        originalSTtoDMatrix[2, 3] *= -1f;
 
         initialSecController = Matrix4x4.TRS(secondaryController.position, secondaryController.rotation, Vector3.one);
         initialSecTracker = Matrix4x4.TRS(steamTracker.position, steamTracker.rotation, Vector3.one);
-        print(originalMatrix.ToString());
+        //print(originalMatrix.ToString());
     }
 }
