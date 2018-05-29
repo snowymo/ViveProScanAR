@@ -21,7 +21,7 @@ public class PLYPathLoader : MonoBehaviour {
 
     public Transform steamTracker;
     public Transform secondaryController;
-    public Matrix4x4 initialSecController;
+    public Matrix4x4 initialSecController, initialSecTracker;
 
     List<GameObject> gos;
     List<PLYObj> plyObjs;
@@ -72,7 +72,7 @@ public class PLYPathLoader : MonoBehaviour {
                     if (plyCoordType == PLY_COORD.VIVE)
                         vertices[i] = (curTracker * originalMatrix.inverse).MultiplyPoint(VviveScale);
                     else if (plyCoordType == PLY_COORD.TRACKER)
-                        vertices[i] = (curTracker * originalMatrix).MultiplyPoint(VviveScale);
+                        vertices[i] = (curTracker * initialSecTracker.inverse * originalMatrix).MultiplyPoint(VviveScale);
                     else if (plyCoordType == PLY_COORD.TEST)
                         vertices[i] = (curSecController * initialSecController.inverse * originalMatrix).MultiplyPoint(VviveScale);
                     i++;
@@ -404,8 +404,8 @@ public class PLYPathLoader : MonoBehaviour {
         originalMatrix[2, 1] = -originalMatrix[2, 1];
         originalMatrix[2, 3] = -originalMatrix[2, 3];
 
-        initialSecController = Matrix4x4.TRS(secondaryController.position, secondaryController.rotation, Vector3.one); 
-
+        initialSecController = Matrix4x4.TRS(secondaryController.position, secondaryController.rotation, Vector3.one);
+        initialSecTracker = Matrix4x4.TRS(steamTracker.position, steamTracker.rotation, Vector3.one);
         print(originalMatrix.ToString());
     }
 }

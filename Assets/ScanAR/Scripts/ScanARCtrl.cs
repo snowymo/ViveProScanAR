@@ -93,7 +93,7 @@ public class ScanARCtrl : MonoBehaviour {
             GameObject newscan = GameObject.Instantiate(loader);
             newscan.transform.parent = transform;
             float prevTime = Time.realtimeSinceStartup;
-            newscan.transform.GetComponent<PLYPathLoader>().plyCoordType = PLYPathLoader.PLY_COORD.TEST;
+            //newscan.transform.GetComponent<PLYPathLoader>().plyCoordType = PLYPathLoader.PLY_COORD.TEST;
             if (steamTracker.gameObject.GetComponent<Trackers>().secondTracker != null)
                 newscan.transform.GetComponent<PLYPathLoader>().steamTracker = steamTracker.gameObject.GetComponent<Trackers>().secondTracker.transform;
             if (secondController != null)
