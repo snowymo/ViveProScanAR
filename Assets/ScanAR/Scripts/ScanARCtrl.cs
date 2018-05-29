@@ -94,8 +94,8 @@ public class ScanARCtrl : MonoBehaviour {
             newscan.transform.parent = transform;
             float prevTime = Time.realtimeSinceStartup;
             newscan.transform.GetComponent<PLYPathLoader>().plyCoordType = PLYPathLoader.PLY_COORD.TEST;
-            if (steamTracker != null)
-                newscan.transform.GetComponent<PLYPathLoader>().steamTracker = steamTracker;
+            if (steamTracker.gameObject.GetComponent<Trackers>().secondTracker != null)
+                newscan.transform.GetComponent<PLYPathLoader>().steamTracker = steamTracker.gameObject.GetComponent<Trackers>().secondTracker.transform;
             if (secondController != null)
                 newscan.transform.GetComponent<PLYPathLoader>().secondaryController = secondController;
 
@@ -106,9 +106,9 @@ public class ScanARCtrl : MonoBehaviour {
 
             scans.Add(newscan);
 
-            // move that to session folder
+            // move that to session folder, it is fine not to do it now
 
-            // render it with correct transform
+            // render it with correct transform, get the calibration elsewhere
         }
 
     }

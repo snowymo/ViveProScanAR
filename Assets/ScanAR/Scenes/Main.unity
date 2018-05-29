@@ -330,8 +330,9 @@ GameObject:
   - component: {fileID: 912299665}
   - component: {fileID: 912299664}
   - component: {fileID: 912299663}
+  - component: {fileID: 912299666}
   m_Layer: 0
-  m_Name: Tracker
+  m_Name: Trackers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -343,7 +344,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 912299662}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6056d8ae3863fdc4e9c51d0cda6704cc, type: 3}
   m_Name: 
@@ -354,7 +355,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 912299662}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d37c2cf88f7c59f4c8cf5d3812568143, type: 3}
   m_Name: 
@@ -375,6 +376,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &912299666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 912299662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3658f52ec2074924e8c4389119a69f43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TrackerAmount: 1
+  secondTracker: {fileID: 0}
 --- !u!1001 &933726703
 Prefab:
   m_ObjectHideFlags: 0
@@ -451,6 +465,7 @@ MonoBehaviour:
   zmqMeshClient: {fileID: 1397157816}
   zmqMatrixClient: {fileID: 535229473}
   steamTracker: {fileID: 912299665}
+  secondController: {fileID: 0}
   loader: {fileID: 1562213171671928, guid: 52ee3b2cac63a0043a49fc09f78bf87b, type: 2}
   isJustIssueScan: 0
 --- !u!4 &1021818330

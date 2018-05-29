@@ -4,17 +4,7 @@ using UnityEngine;
 using System.Diagnostics;
 using System;
 
-public class SystemCommand : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+public class SystemCommand {
 
     public void IssueScan()
     {
@@ -37,7 +27,7 @@ public class SystemCommand : MonoBehaviour {
         }
         catch (Exception e)
         {
-            print(e);
+            UnityEngine.Debug.Log(e);
         }
     }
 }

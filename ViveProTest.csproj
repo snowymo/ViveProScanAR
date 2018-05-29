@@ -271,6 +271,7 @@
     <Compile Include="Assets\ScanAR\Scripts\SteamVR\ControllerInput.cs" />
     <Compile Include="Assets\ScanAR\Scripts\SteamVR\Record.cs" />
     <Compile Include="Assets\ScanAR\Scripts\SteamVR\Tracker.cs" />
+    <Compile Include="Assets\ScanAR\Scripts\SteamVR\Trackers.cs" />
     <Compile Include="Assets\ScanAR\Scripts\Utility.cs" />
     <Compile Include="Assets\ScanAR\Scripts\ViveTest.cs" />
     <Compile Include="Assets\ScanAR\Scripts\ZMQ\client.cs" />

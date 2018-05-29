@@ -57,9 +57,12 @@ public class ControllerInput : MonoBehaviour {
             || scannerController.GetComponent<Valve.VR.InteractionSystem.Hand>() == null)
             return;
 
+        Valve.VR.InteractionSystem.Hand scannerhand = scannerController.GetComponent<Valve.VR.InteractionSystem.Hand>();
+        Valve.VR.InteractionSystem.Hand secondhand = secondController.GetComponent<Valve.VR.InteractionSystem.Hand>();
         // issue scan with scannerController.trigger or secondController.application
-        if (scannerController.GetComponent<Valve.VR.InteractionSystem.Hand>().controller.GetPressDown(SteamVR_Controller.ButtonMask.Trigger)
-            || secondController.GetComponent<Valve.VR.InteractionSystem.Hand>().controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
+        if (scannerhand != null && scannerhand.controller != null && scannerhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.Trigger)
+            || (secondhand != null && secondhand.controller != null
+            && secondhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu)))
         {
             // remove that scanfile
             if (File.Exists(Utility.scanPath))
