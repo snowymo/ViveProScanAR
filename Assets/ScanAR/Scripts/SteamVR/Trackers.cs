@@ -32,6 +32,7 @@ public class Trackers : MonoBehaviour {
             return;
         // choose the lowest as the second tracker
         float trackerHeight = 2f;
+        int secondTrackerIdx = -1;
         for (int i = 0; i < trackers.Count; i++)
         {
             trackers[i].name = "scannerTracker";
@@ -40,13 +41,17 @@ public class Trackers : MonoBehaviour {
                 if (trackerHeight > trackers[i].transform.position.y)
                 {
                     trackerHeight = trackers[i].transform.position.y;
-                    secondTracker = trackers[i];
-                    secondTracker.name = "secondTracker";
+                    secondTrackerIdx = i;
                 }
-            }
-            
+            } 
         }
-            
+        if(secondTrackerIdx != -1)
+        {
+            secondTracker = trackers[secondTrackerIdx];
+            secondTracker.name = "secondTracker";
+        }
+        
+
     }
     // setup two trackers
     void setupTrackers()
