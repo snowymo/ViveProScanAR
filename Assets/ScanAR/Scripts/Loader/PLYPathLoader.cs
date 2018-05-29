@@ -20,6 +20,8 @@ public class PLYPathLoader : MonoBehaviour {
     public client zmqMeshClient, zmqMatrixClient;
 
     public Transform steamTracker;
+    public Transform secondaryController;
+    public Matrix4x4 initialSecController;
 
     List<GameObject> gos;
     List<PLYObj> plyObjs;
@@ -38,8 +40,6 @@ public class PLYPathLoader : MonoBehaviour {
 
     public PLY_COORD plyCoordType;
 
-    public string davidPLYFileName;
-
     // Use this for initialization
     void Start () {
 
@@ -56,7 +56,8 @@ public class PLYPathLoader : MonoBehaviour {
         if (steamTracker.gameObject.GetComponent<SteamVR_TrackedObject>().isValid)
         {
             Matrix4x4 curTracker = Matrix4x4.TRS(steamTracker.position, steamTracker.rotation, Vector3.one);
-            for(int plyObji = 0; plyObji < plyObjs.Count; plyObji++)
+            Matrix4x4 curSecController = Matrix4x4.TRS(secondaryController.position, secondaryController.rotation, Vector3.one);
+            for (int plyObji = 0; plyObji < plyObjs.Count; plyObji++)
             {
                 Mesh mesh = gos[plyObji].GetComponent<MeshFilter>().mesh;
                 Vector3[] vertices = mesh.vertices;
@@ -73,7 +74,7 @@ public class PLYPathLoader : MonoBehaviour {
                     else if (plyCoordType == PLY_COORD.TRACKER)
                         vertices[i] = (curTracker * originalMatrix).MultiplyPoint(VviveScale);
                     else if (plyCoordType == PLY_COORD.TEST)
-                        vertices[i] = originalMatrix.MultiplyPoint(VviveScale);
+                        vertices[i] = (curSecController * initialSecController.inverse * originalMatrix).MultiplyPoint(VviveScale);
                     i++;
                 }
                 //print("after :" + vertices[0]);
@@ -402,6 +403,8 @@ public class PLYPathLoader : MonoBehaviour {
         originalMatrix[2, 0] = -originalMatrix[2, 0];
         originalMatrix[2, 1] = -originalMatrix[2, 1];
         originalMatrix[2, 3] = -originalMatrix[2, 3];
+
+        initialSecController = Matrix4x4.TRS(secondaryController.position, secondaryController.rotation, Vector3.one); 
 
         print(originalMatrix.ToString());
     }

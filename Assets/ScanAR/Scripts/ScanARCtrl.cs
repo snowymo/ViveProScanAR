@@ -9,7 +9,7 @@ public class ScanARCtrl : MonoBehaviour {
 
     public client zmqMatrixClient;
 
-    public Transform steamTracker;
+    public Transform steamTracker, secondController;
 
     public GameObject loader;
 
@@ -94,12 +94,16 @@ public class ScanARCtrl : MonoBehaviour {
             newscan.transform.parent = transform;
             float prevTime = Time.realtimeSinceStartup;
             newscan.transform.GetComponent<PLYPathLoader>().plyCoordType = PLYPathLoader.PLY_COORD.TEST;
+            if (steamTracker != null)
+                newscan.transform.GetComponent<PLYPathLoader>().steamTracker = steamTracker;
+            if (secondController != null)
+                newscan.transform.GetComponent<PLYPathLoader>().secondaryController = secondController;
+
             newscan.transform.GetComponent<PLYPathLoader>().LoadMeshesDirectly();
             float curTime = Time.realtimeSinceStartup;
             print("load meshes:" + (curTime - prevTime) + "s");
             newscan.transform.GetComponent<PLYPathLoader>().LoadMatrixDirectly();
-            if (steamTracker != null)
-                newscan.transform.GetComponent<PLYPathLoader>().steamTracker = steamTracker;
+
             scans.Add(newscan);
 
             // move that to session folder
