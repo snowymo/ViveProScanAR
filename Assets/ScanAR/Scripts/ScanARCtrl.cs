@@ -31,13 +31,14 @@ public class ScanARCtrl : MonoBehaviour {
 
 
         // Use this for initialization
-        void Start () {
+    void Start () {
         scans = new List<GameObject>();
         packetId = -1;
         Utility.InitialIndices();
         isJustIssueScan = false;
 
         OSRdata = OSRDLL.CreateOSRData();
+        print("OSRdata addr:" + OSRdata);
         scanAmount = 0;
     }
 

@@ -2,3 +2,4 @@ Library/
 Assets/ViveSR/Plugins/
 Temp/
 *.meta
+*.pdb

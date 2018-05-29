@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class OSRDLL : MonoBehaviour {
 
-    [DllImport("OSR", CharSet = CharSet.Ansi)]
+    [DllImport("OSR"/*, CharSet = CharSet.Ansi, EntryPoint= "CreateOSRData"*/)]
     public static extern IntPtr CreateOSRData();
 
     [DllImport("OSR")]
