@@ -84,6 +84,13 @@ public class PLYPathLoader : MonoBehaviour {
                         Vector3 scVertex = (curTracker * initialSecTracker.inverse * curScanController * originalSCtoDMatrix).MultiplyPoint(VviveScale);
                         Vector3 stVertex = (curTracker * initialSecTracker.inverse * curScanTracker * originalSTtoDMatrix).MultiplyPoint(VviveScale);
                         vertices[i] = (scVertex + stVertex) / 2f;
+                        if(i == 0)
+                        {
+                            // calculate the diff
+                            Vector3 vC = (curScanController * originalSCtoDMatrix).MultiplyPoint(VviveScale);
+                            Vector3 vT = (curScanTracker * originalSTtoDMatrix).MultiplyPoint(VviveScale);
+                            print("diff:" + (vC - vT).ToString("F4"));
+                        }
                     }
                         
                     i++;

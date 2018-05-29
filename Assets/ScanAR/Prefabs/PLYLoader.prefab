@@ -68,11 +68,79 @@ MonoBehaviour:
     e31: 0
     e32: 0
     e33: 0
+  originalSCtoDMatrix:
+    e00: 0
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 0
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 0
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 0
+  originalSTtoDMatrix:
+    e00: 0
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 0
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 0
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 0
   zmqMeshClient: {fileID: 0}
   zmqMatrixClient: {fileID: 0}
   steamTracker: {fileID: 0}
+  secondaryController: {fileID: 0}
+  initialSecController:
+    e00: 0
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 0
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 0
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 0
+  initialSecTracker:
+    e00: 0
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 0
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 0
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 0
   meshPrefab: {fileID: 1712094683076376, guid: a890c6a698e58074f956184488862298, type: 2}
   shader: {fileID: 4800000, guid: 9a61243d781be444b96633daa5a67f68, type: 3}
   textureShader: {fileID: 10752, guid: 0000000000000000f000000000000000, type: 0}
-  plyCoordType: 1
-  davidPLYFileName: currentScan
+  plyCoordType: 3
