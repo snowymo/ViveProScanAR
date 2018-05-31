@@ -9,6 +9,7 @@ public class Record : MonoBehaviour {
 
     public List<float> angles;
     public List<Vector3> eulerAngles;
+    public List<float> diss;
 
 	// Use this for initialization
 	void Start () {
@@ -16,6 +17,7 @@ public class Record : MonoBehaviour {
         tracker_rots = new List<Quaternion>();
         angles = new List<float>();
         eulerAngles = new List<Vector3>();
+        diss = new List<float>();
     }
 	
 	// Update is called once per frame
@@ -45,6 +47,8 @@ public class Record : MonoBehaviour {
 
             eulerAngles.Add(cur_eulerAngle);
             angles.Add(cur_angle);
+
+            diss.Add((tracker_poses[i] - tracker_poses[i + 1]).magnitude);
         }
     }
 }

@@ -98,8 +98,16 @@ public class ScanARCtrl : MonoBehaviour {
 
     public void IntegrateScan()
     {
-        OSRDLL.OSRIntegrate(OSRdata, curAddedScan, ref integratedVerts, ref integratedColors, ref integratedFaces);
-        --scanAmount;
+        OSRDLL.OSRIntegrate(OSRdata, curAddedScan, ref integratedVerts, ref integratedColors, ref integratedFaces);// later it will become vectors of the data for each mesh
+        //--scanAmount;
+        // modify the data of current scan
+        GameObject curScan = scans[scans.Count - 1];
+
+        float prevTime = Time.realtimeSinceStartup;
+
+        curScan.transform.GetComponent<PLYPathLoader>().UpdateIntegratedMesh(ref integratedVerts,  ref integratedColors,  ref integratedFaces);
+        float curTime = Time.realtimeSinceStartup;
+        print("load meshes:" + (curTime - prevTime) + "s");
 
     }
 
@@ -132,7 +140,10 @@ public class ScanARCtrl : MonoBehaviour {
             if (scanController != null)
                 newscan.transform.GetComponent<PLYPathLoader>().scanController = scanController;
 
+            // duplicate for sc and st test
             newscan.transform.GetComponent<PLYPathLoader>().LoadMeshesDirectly();
+            //newscan.transform.GetComponent<PLYPathLoader>().LoadMeshesDUO();
+
             float curTime = Time.realtimeSinceStartup;
             print("load meshes:" + (curTime - prevTime) + "s");
             newscan.transform.GetComponent<PLYPathLoader>().LoadMatrixDirectly();
@@ -143,17 +154,25 @@ public class ScanARCtrl : MonoBehaviour {
 
             // render it with correct transform, get the calibration elsewhere
 
-            // IntPtr OSRAddScan(IntPtr osrData, Vector3[] vertices, Color32[] colors, uint[] faces, Matrix4x4 mTransform)
-            PLYPathLoader ppl = newscan.transform.GetComponent<PLYPathLoader>();
-            curAddedScan = OSRDLL.OSRAddScan(OSRdata, ppl.rawScanVertices, ppl.rawScanColors, ppl.rawScanFaces, ppl.originalSCtoDMatrix);
-            ++scanAmount;
+            
         }
 
     }
 	
 	// Update is called once per frame
 	void Update () {
+
+        if (scans.Count > scanAmount)
+        {
+            // IntPtr OSRAddScan(IntPtr osrData, Vector3[] vertices, Color32[] colors, uint[] faces, Matrix4x4 mTransform)
+            PLYPathLoader ppl = scans[scans.Count - 1].transform.GetComponent<PLYPathLoader>();
+            curAddedScan = OSRDLL.OSRAddScan(OSRdata, ppl.rawScanVertices, ppl.rawScanColors, ppl.rawScanFaces, ppl.originalSCtoDMatrix);
+            ++scanAmount;
+        }
+
         dllHandle();
+
+        
 	}
 
     private void OnApplicationQuit()
