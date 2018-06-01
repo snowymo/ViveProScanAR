@@ -65,6 +65,7 @@ public class ControllerInput : MonoBehaviour {
             || (secondhand != null && secondhand.controller != null
             && secondhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu)))
         {
+            print("issue a scan");
             // remove that scanfile
             if (File.Exists(Utility.scanPath))
             {
@@ -79,6 +80,7 @@ public class ControllerInput : MonoBehaviour {
         if (secondhand != null && secondhand.controller != null
            && secondhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
         {
+            print("integrate a scan");
             // second controller trigger for integration
             scanARCtrl.IntegrateScan();
         }
@@ -87,6 +89,7 @@ public class ControllerInput : MonoBehaviour {
         if (secondhand != null && secondhand.controller != null
          && secondhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
         {
+            print("register a scan");
             // second controller touchpad for register
             scanARCtrl.RegisterScan();
         }

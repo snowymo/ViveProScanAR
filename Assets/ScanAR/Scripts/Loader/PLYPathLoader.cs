@@ -27,8 +27,8 @@ public class PLYPathLoader : MonoBehaviour {
     public Transform secondaryController,scanController;
     public Matrix4x4 initialSecController, initialSecTracker;
 
-    List<GameObject> gos;
-    List<PLYObj> plyObjs;
+    List<GameObject> gos, integratedGOs;
+    List<PLYObj> plyObjs, integratedObjs;
     //List<GameObject> pointGOs;
 
     public GameObject meshPrefab;
@@ -151,6 +151,43 @@ public class PLYPathLoader : MonoBehaviour {
                         // calculate average
                         Vector3 scVertex = (curTracker * initialSecTracker.inverse * curScanController * originalSCtoDMatrix).MultiplyPoint(VviveScale);
                         Vector3 stVertex = (curTracker * initialSecTracker.inverse * curScanTracker * originalSTtoDMatrix).MultiplyPoint(VviveScale);
+                        vertices[i] = (scVertex + stVertex) / 2f;
+                        if (i == 0)
+                        {
+                            // calculate the diff
+                            Vector3 vC = (curScanController * originalSCtoDMatrix).MultiplyPoint(VviveScale);
+                            Vector3 vT = (curScanTracker * originalSTtoDMatrix).MultiplyPoint(VviveScale);
+                            //print("diff:" + (vC - vT).ToString("F4"));
+                        }
+                    }
+
+                    i++;
+                }
+                //print("after :" + vertices[0]);
+                mesh.vertices = vertices;
+                //mesh.RecalculateNormals();
+            }
+
+            for (int integratedIdx = 0; integratedIdx < integratedObjs.Count; integratedIdx++)
+            {
+                Mesh mesh = integratedGOs[integratedIdx].GetComponent<MeshFilter>().mesh;
+                Vector3[] vertices = mesh.vertices;
+                //print("originialVertices:" + originialVertices[0]);
+                int i = 0;
+                while (i < Mathf.Min(65535, vertices.Length))
+                {
+                    Vector3 VviveScale = integratedObjs[integratedIdx].originalVertices[i];
+                    if (plyCoordType == PLY_COORD.VIVE)
+                        vertices[i] = (curTracker * originalMatrix.inverse).MultiplyPoint(VviveScale);
+                    else if (plyCoordType == PLY_COORD.TRACKER)
+                        vertices[i] = (curTracker * initialSecTracker.inverse * originalMatrix).MultiplyPoint(VviveScale);
+                    else if (plyCoordType == PLY_COORD.TEST)
+                        vertices[i] = (curSecController * initialSecController.inverse * originalMatrix).MultiplyPoint(VviveScale);
+                    else if (plyCoordType == PLY_COORD.BOTH)
+                    {
+                        // calculate average
+                        Vector3 scVertex = (curTracker * initialSecTracker.inverse).MultiplyPoint(VviveScale);
+                        Vector3 stVertex = (curTracker * initialSecTracker.inverse).MultiplyPoint(VviveScale);
                         vertices[i] = (scVertex + stVertex) / 2f;
                         if (i == 0)
                         {
@@ -361,6 +398,10 @@ public class PLYPathLoader : MonoBehaviour {
             gos = new List<GameObject>();
         if (plyObjs == null)
             plyObjs = new List<PLYObj>();
+        if (integratedGOs == null)
+            integratedGOs = new List<GameObject>();
+        if (integratedObjs == null)
+            integratedObjs = new List<PLYObj>();
     }
 
     public void LoadMeshes()
@@ -446,24 +487,29 @@ public class PLYPathLoader : MonoBehaviour {
         {
             gos[i].SetActive(false);
         }
+        // clear plyobjs and create new because different scale
         plyObjs = new List<PLYObj>();
         gos = new List<GameObject>();
+
+        // maybe there is only one integrated result pair at all, check later
+
         // keep the raw vars the same for now
         // I have to split the mesh in c++ side and get a list of (vert,color,face), right now let's assume there is only one
 
         PLYObj plyObj = new PLYObj();
 
         plyObj.originalVertices = new Vector3[vertices.Length];
-        plyObj.originalVertices = vertices;
+        Array.Copy(vertices, plyObj.originalVertices, vertices.Length);
         plyObj.origianlColors = new Color32[colors.Length];
-        plyObj.origianlColors = colors;
+        Array.Copy(colors, plyObj.origianlColors, colors.Length);
         plyObj.originalIndices = new int[faces.Length];
-        for(int i = 0; i < faces.Length;i++)
-            plyObj.originalIndices[i] = (int)faces[i];
+        /*Array.Copy(plyObj.originalIndices, faces, faces.Length);*/
+        for (int i = 0; i < faces.Length; i++)
+            plyObj.originalIndices[i] = Convert.ToInt32(faces[i]);
 
         plyObjs.Add(plyObj);
 
-        print("LoadMesh ing:" + plyObj.originalVertices[0] + " vertices and " + plyObj.originalIndices[0] + " faces");
+        print("LoadMesh ing:" + plyObj.origianlColors[0] + " color and " + plyObj.originalIndices[0] + " faces");
 
         // create gameobject and mesh to assign
         GameObject go = Instantiate<GameObject>(meshPrefab, transform);
@@ -486,12 +532,12 @@ public class PLYPathLoader : MonoBehaviour {
             mesh.colors32 = tempColors;
         }
         else
-            mesh.vertices = plyObj.originalVertices;
+            mesh.colors32 = plyObj.origianlColors;
 
         if (plyObj.originalIndices.Length > 65000*3)
         {
             int[] tempFaces = new int[65000*3];
-            Array.Copy(plyObj.origianlColors, tempFaces, 65000);
+            Array.Copy(plyObj.originalIndices, tempFaces, 65000);
             mesh.SetIndices(tempFaces, MeshTopology.Triangles, 0, true);
         }
         else
@@ -514,6 +560,7 @@ public class PLYPathLoader : MonoBehaviour {
 
         // if we load from David, then load as point cloud
         // new version, we load from rply dll, so that we have color rather than texture
+        print("LoadMeshesDirectly()");
         IntPtr plyIntPtr = PlyLoaderDll.LoadPly(Utility.scanPath);
 
         if (plyIntPtr == null)
@@ -530,7 +577,8 @@ public class PLYPathLoader : MonoBehaviour {
         {
             createMesh(i, Math.Min(Utility.limitCount, rawScanVertices.Length - i * Utility.limitCount), ref rawScanVertices, ref rawScanColors);
         }
-       
+        // test
+        print("rawScanColors 0 and 100 " + rawScanColors[0].ToString("F3") + "\t" + rawScanColors[100].ToString("F3"));
     }
 
     public void LoadMeshesDUO()

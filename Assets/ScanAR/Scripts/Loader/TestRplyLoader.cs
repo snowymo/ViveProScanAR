@@ -35,27 +35,28 @@ public class TestRplyLoader : MonoBehaviour {
             Array.Copy(color, startIdx * limitCount, curC, 0, verticeCnt);
             mesh.colors32 = curC;
         }
-        int[] ifaces = new int[faces.Length];
-        for(int i = 0; i < faces.Length; i++)
+        //         int[] ifaces = new int[faces.Length];
+        //         for(int i = 0; i < faces.Length; i++)
+        //         {
+        //             ifaces[i] = Convert.ToInt32( faces[i]);
+        //         }
+        //         if(faces != null)
+        //         {
+        //             mesh.SetIndices(ifaces, MeshTopology.Triangles, 0);
+        //         }
+        //         else
+        //         {
+        Utility.InitialIndices();
+        if (Utility.indices.Length > verticeCnt)
         {
-            ifaces[i] = Convert.ToInt32( faces[i]);
-        }
-        if(faces != null)
-        {
-            mesh.SetIndices(ifaces, MeshTopology.Triangles, 0);
+            int[] subindices = new int[verticeCnt];
+            Array.Copy(Utility.indices, subindices, verticeCnt);
+            mesh.SetIndices(subindices, MeshTopology.Points, 0);
         }
         else
-        {
-            if (indices.Length > verticeCnt)
-            {
-                int[] subindices = new int[verticeCnt];
-                Array.Copy(indices, subindices, verticeCnt);
-                mesh.SetIndices(subindices, MeshTopology.Points, 0);
-            }
-            else
-                mesh.SetIndices(indices, MeshTopology.Points, 0);
-        }
-        
+            mesh.SetIndices(Utility.indices, MeshTopology.Points, 0);
+        /*        }*/
+
         mesh.name = "mesh" + startIdx.ToString();
 
         GameObject go = new GameObject("go" + startIdx.ToString());
@@ -90,17 +91,84 @@ public class TestRplyLoader : MonoBehaviour {
         
         
     }
+    public Vector3[] rawScanVertices;
+    public Color32[] rawScanColors;
+    public uint[] rawScanFaces;
+    public void LoadMeshesDirectly()
+    {
+        print("LoadMeshesDirectly()");
+        if (!isAbsolute)
+            absFilePath = System.IO.Path.Combine(Application.streamingAssetsPath, fileName);
+        IntPtr plyIntPtr = PlyLoaderDll.LoadPly(absFilePath);
+
+        if (plyIntPtr == null)
+            return;
+
+        Mesh mesh = new Mesh();
+        rawScanVertices = PlyLoaderDll.GetRVertices(plyIntPtr);
+        rawScanColors = PlyLoaderDll.GetRColors(plyIntPtr);
+        rawScanFaces = PlyLoaderDll.GetRIndexs(plyIntPtr);
+        PlyLoaderDll.UnLoadPly(plyIntPtr);
+
+        int meshCount = rawScanVertices.Length / Utility.limitCount + 1;
+        for (int i = 0; i < meshCount; i++)
+        {
+            createMesh(i, Math.Min(Utility.limitCount, rawScanVertices.Length - i * Utility.limitCount), ref rawScanVertices, ref rawScanColors);
+        }
+
+    }
+    void createMesh(int startIdx, int verticeCnt, ref Vector3[] vertex, ref Color32[] color)
+    {
+        Mesh mesh = new Mesh();
+        //mesh.vertices = new Vector3[verticeCnt];
+
+        Vector3[] curV = new Vector3[verticeCnt];
+        Array.Copy(vertex, startIdx * Utility.limitCount, curV, 0, verticeCnt);
+        mesh.vertices = curV;
+
+        Color32[] curC = new Color32[verticeCnt];
+        Array.Copy(color, startIdx * Utility.limitCount, curC, 0, verticeCnt);
+        mesh.colors32 = curC;
+
+        if (Utility.indices.Length > verticeCnt)
+        {
+            int[] subindices = new int[verticeCnt];
+            Array.Copy(Utility.indices, subindices, verticeCnt);
+            mesh.SetIndices(subindices, MeshTopology.Points, 0);
+        }
+        else
+            mesh.SetIndices(Utility.indices, MeshTopology.Points, 0);
+        mesh.name = "mesh" + startIdx.ToString();
+
+//         PLYObj plyObj = new PLYObj();
+// 
+//         plyObj.originalVertices = curV;
+//         plyObj.origianlColors = curC;
+// 
+//         plyObjs.Add(plyObj);
+
+        GameObject go = new GameObject("go" + startIdx.ToString());
+        go.transform.parent = transform;
+        gos.Add(go);
+
+        MeshFilter mf = go.AddComponent<MeshFilter>();
+        mf.mesh = mesh;
+
+        MeshRenderer mr = go.AddComponent<MeshRenderer>();
+        mr.material = new Material(shader);
+    }
 
     // Use this for initialization
     void Start () {
-        indices = new int[limitCount];
-        for (int i = 0; i < limitCount; i++)
-        {
-            indices[i] = i;
-        }
-
+        //         indices = new int[limitCount];
+        //         for (int i = 0; i < limitCount; i++)
+        //         {
+        //             indices[i] = i;
+        //         }
+        Utility.InitialIndices();
         prevTime = Time.realtimeSinceStartup;
-        loadPLYDownSample();
+        /*loadPLYDownSample();*/
+        LoadMeshesDirectly();
         curTime = Time.realtimeSinceStartup;
         print("whole took " + (curTime - prevTime) + "s");
     }

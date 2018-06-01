@@ -36,7 +36,7 @@ public class ScanARCtrl : MonoBehaviour {
         packetId = -1;
         Utility.InitialIndices();
         isJustIssueScan = false;
-
+        print("before create OSRdata");
         OSRdata = OSRDLL.CreateOSRData();
         print("OSRdata addr:" + OSRdata);
         scanAmount = 0;
@@ -98,15 +98,18 @@ public class ScanARCtrl : MonoBehaviour {
 
     public void IntegrateScan()
     {
+        float prevTime = Time.realtimeSinceStartup;
+
         OSRDLL.OSRIntegrate(OSRdata, curAddedScan, ref integratedVerts, ref integratedColors, ref integratedFaces);// later it will become vectors of the data for each mesh
         //--scanAmount;
         // modify the data of current scan
         GameObject curScan = scans[scans.Count - 1];
-
-        float prevTime = Time.realtimeSinceStartup;
-
-        curScan.transform.GetComponent<PLYPathLoader>().UpdateIntegratedMesh(ref integratedVerts,  ref integratedColors,  ref integratedFaces);
         float curTime = Time.realtimeSinceStartup;
+        print("IntegrateScan:" + (curTime - prevTime) + "s");
+
+        prevTime = Time.realtimeSinceStartup;
+        curScan.transform.GetComponent<PLYPathLoader>().UpdateIntegratedMesh(ref integratedVerts,  ref integratedColors,  ref integratedFaces);
+        curTime = Time.realtimeSinceStartup;
         print("load meshes:" + (curTime - prevTime) + "s");
 
     }
@@ -166,6 +169,7 @@ public class ScanARCtrl : MonoBehaviour {
         {
             // IntPtr OSRAddScan(IntPtr osrData, Vector3[] vertices, Color32[] colors, uint[] faces, Matrix4x4 mTransform)
             PLYPathLoader ppl = scans[scans.Count - 1].transform.GetComponent<PLYPathLoader>();
+            print("ppl.rawScanColors:" + ppl.rawScanColors[0].ToString("F3") + " " + ppl.rawScanColors[100].ToString("F3"));
             curAddedScan = OSRDLL.OSRAddScan(OSRdata, ppl.rawScanVertices, ppl.rawScanColors, ppl.rawScanFaces, ppl.originalSCtoDMatrix);
             ++scanAmount;
         }

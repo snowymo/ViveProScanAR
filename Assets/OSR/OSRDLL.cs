@@ -54,6 +54,7 @@ public class OSRDLL : MonoBehaviour {
         int vAmt, cAmt, fAmt;
         Debug.Log("before OSRIntegrate");
         Integrate( osrData,  scan);
+        
         // need to know the amount
         /*Marshal.Copy(fVerts, verts, 0, count);*/
         IntPtr vPointer = GetIntegratedVerts(osrData, out vAmt);
@@ -79,7 +80,7 @@ public class OSRDLL : MonoBehaviour {
             colors[i] = (Color32)Marshal.PtrToStructure(p, typeof(Color32));
             p += Marshal.SizeOf(typeof(Color32)); // move to next structure
         }
-
+        print(" colors[i] " + colors[100] + " " + colors[200]);
         IntPtr fPointer = GetIntegratedIndices(osrData, out fAmt);
         Debug.Log("OSRIntegrate: " + fAmt + " faces");
         faces = new uint[fAmt*3];
