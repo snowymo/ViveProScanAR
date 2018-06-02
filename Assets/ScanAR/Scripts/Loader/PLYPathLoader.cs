@@ -537,7 +537,7 @@ public class PLYPathLoader : MonoBehaviour {
         if (plyObj.originalIndices.Length > 65000*3)
         {
             int[] tempFaces = new int[65000*3];
-            Array.Copy(plyObj.originalIndices, tempFaces, 65000);
+            Array.Copy(plyObj.originalIndices, tempFaces, 65000*3);
             mesh.SetIndices(tempFaces, MeshTopology.Triangles, 0, true);
         }
         else

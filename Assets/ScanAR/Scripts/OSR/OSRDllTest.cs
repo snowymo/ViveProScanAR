@@ -47,8 +47,7 @@ public class OSRDllTest : MonoBehaviour {
         prevTime = Time.realtimeSinceStartup;
 
         TestRplyLoader ppl = GetComponent<TestRplyLoader>();
-        ppl.createMesh(0, integratedVerts.Length, ref integratedVerts, ref integratedColors, integratedFaces.Length, ref integratedFaces);
-
+        ppl.createMesh(integratedVerts.Length, ref integratedVerts, ref integratedColors, integratedFaces.Length, ref integratedFaces);
         curTime = Time.realtimeSinceStartup;
         print("load meshes:" + (curTime - prevTime) + "s");
     }

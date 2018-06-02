@@ -47,7 +47,7 @@ public class TestRplyLoader : MonoBehaviour {
         //         else
         //         {
         Utility.InitialIndices();
-        if (Utility.indices.Length > verticeCnt)
+        if (Utility.indices.Length > 65000)
         {
             int[] subindices = new int[verticeCnt];
             Array.Copy(Utility.indices, subindices, verticeCnt);
@@ -117,6 +117,50 @@ public class TestRplyLoader : MonoBehaviour {
         }
 
     }
+
+    public void createMesh(int verticeCnt, ref Vector3[] vertex, ref Color32[] color, int faceCnt, ref uint[] faces)
+    {
+        Mesh mesh = new Mesh();
+        //mesh.vertices = new Vector3[verticeCnt];
+
+        Vector3[] curV = new Vector3[verticeCnt];
+        Array.Copy(vertex, 0, curV, 0, verticeCnt);
+        mesh.vertices = curV;
+
+        Color32[] curC = new Color32[verticeCnt];
+        Array.Copy(color, 0, curC, 0, verticeCnt);
+        mesh.colors32 = curC;
+
+//         int[] curF = new int[faceCnt];
+//         Array.Copy(faces, 0, curF, 0, faceCnt);
+//         mesh.SetIndices(curF, MeshTopology.Triangles, 0);
+
+        int[] ifaces = new int[faceCnt];
+        /*Array.Copy(plyObj.originalIndices, faces, faces.Length);*/
+        for (int i = 0; i < faces.Length; i++)
+            ifaces[i] = Convert.ToInt32(faces[i]);
+        if (faceCnt > 65000 * 3)
+        {
+            int[] tempFaces = new int[65000 * 3];
+            Array.Copy(ifaces, tempFaces, 65000 * 3);
+            mesh.SetIndices(tempFaces, MeshTopology.Triangles, 0, true);
+        }
+        else
+            mesh.SetIndices(ifaces, MeshTopology.Triangles, 0, true);
+
+        mesh.name = "mesh";
+
+        GameObject go = new GameObject("go");
+        go.transform.parent = transform;
+        gos.Add(go);
+
+        MeshFilter mf = go.AddComponent<MeshFilter>();
+        mf.mesh = mesh;
+
+        MeshRenderer mr = go.AddComponent<MeshRenderer>();
+        mr.material = new Material(shader);
+    }
+
     void createMesh(int startIdx, int verticeCnt, ref Vector3[] vertex, ref Color32[] color)
     {
         Mesh mesh = new Mesh();
