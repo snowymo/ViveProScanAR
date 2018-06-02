@@ -14,7 +14,7 @@ public class OSRDllTest : MonoBehaviour {
         integratedFaces = new uint[0];
 
         print("before create OSRdata");
-        OSRdata = OSRDLL.CreateOSRData();
+        OSRdata = OSRDLL.GetOSRData();
         print("OSRdata addr:" + OSRdata);
     }
 	
@@ -51,5 +51,13 @@ public class OSRDllTest : MonoBehaviour {
 
         curTime = Time.realtimeSinceStartup;
         print("load meshes:" + (curTime - prevTime) + "s");
+    }
+
+    public void RegisterScan()
+    {
+        Matrix4x4 resTrans = Matrix4x4.identity;
+        OSRDLL.OSRRegister(OSRdata, curAddedScan, ref resTrans);
+        print("after Register() " + resTrans.ToString("F3"));
+        // need to apply to all vertices
     }
 }

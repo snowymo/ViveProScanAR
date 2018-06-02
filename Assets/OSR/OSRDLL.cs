@@ -27,6 +27,16 @@ public class OSRDLL : MonoBehaviour {
     [DllImport("OSR")]
     public static extern IntPtr Register(IntPtr osrData, IntPtr scan);
 
+    public static IntPtr _osrInstance = IntPtr.Zero;
+    public static IntPtr GetOSRData()
+    {
+        if(_osrInstance == IntPtr.Zero)
+        {
+            _osrInstance = CreateOSRData();
+        }
+        return _osrInstance;
+    }
+
     public static IntPtr OSRAddScan(IntPtr osrData, Vector3[] vertices, Color32[] colors, uint[] faces, Matrix4x4 mTransform)
     {
         int vertCnt = vertices.Length;
