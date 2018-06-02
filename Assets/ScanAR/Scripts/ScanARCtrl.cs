@@ -171,6 +171,7 @@ public class ScanARCtrl : MonoBehaviour {
             PLYPathLoader ppl = scans[scans.Count - 1].transform.GetComponent<PLYPathLoader>();
             print("ppl.rawScanColors:" + ppl.rawScanColors[0].ToString("F3") + " " + ppl.rawScanColors[100].ToString("F3"));
             curAddedScan = OSRDLL.OSRAddScan(OSRdata, ppl.rawScanVertices, ppl.rawScanColors, ppl.rawScanFaces, ppl.originalSCtoDMatrix);
+            print("curAddedScan address:" + curAddedScan);
             ++scanAmount;
         }
 

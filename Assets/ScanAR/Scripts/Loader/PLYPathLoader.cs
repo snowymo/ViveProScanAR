@@ -121,7 +121,7 @@ public class PLYPathLoader : MonoBehaviour {
 
     void updateMeshEveryFrame()
     {
-        if (steamTracker.gameObject.GetComponent<SteamVR_TrackedObject>().isValid)
+        if (steamTracker != null && steamTracker.gameObject.GetComponent<SteamVR_TrackedObject>().isValid)
         {
             Matrix4x4 curTracker = Matrix4x4.TRS(steamTracker.position, steamTracker.rotation, Vector3.one);
             Matrix4x4 curSecController = Matrix4x4.TRS(secondaryController.position, secondaryController.rotation, Vector3.one);
@@ -708,8 +708,10 @@ public class PLYPathLoader : MonoBehaviour {
         originalSTtoDMatrix[2, 1] *= -1f;
         originalSTtoDMatrix[2, 3] *= -1f;
 
-        initialSecController = Matrix4x4.TRS(secondaryController.position, secondaryController.rotation, Vector3.one);
-        initialSecTracker = Matrix4x4.TRS(steamTracker.position, steamTracker.rotation, Vector3.one);
+        if(secondaryController)
+            initialSecController = Matrix4x4.TRS(secondaryController.position, secondaryController.rotation, Vector3.one);
+        if(steamTracker)
+            initialSecTracker = Matrix4x4.TRS(steamTracker.position, steamTracker.rotation, Vector3.one);
         //print(originalMatrix.ToString());
     }
 }

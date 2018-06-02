@@ -20,7 +20,7 @@ public class TestRplyLoader : MonoBehaviour {
 
     public int limitCount;
 
-    void createMesh(int startIdx, int verticeCnt, ref Vector3[] vertex, ref Color32[] color, int faceCnt, ref uint[] faces)
+    public void createMesh(int startIdx, int verticeCnt, ref Vector3[] vertex, ref Color32[] color, int faceCnt, ref uint[] faces)
     {
         Mesh mesh = new Mesh();
         //mesh.vertices = new Vector3[verticeCnt];

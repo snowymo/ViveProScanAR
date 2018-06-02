@@ -61,9 +61,11 @@ public class ControllerInput : MonoBehaviour {
         Valve.VR.InteractionSystem.Hand scannerhand = scannerController.GetComponent<Valve.VR.InteractionSystem.Hand>();
         Valve.VR.InteractionSystem.Hand secondhand = secondController.GetComponent<Valve.VR.InteractionSystem.Hand>();
         // issue scan with scannerController.trigger or secondController.application
-        if (scannerhand != null && scannerhand.controller != null && scannerhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.Trigger)
-            || (secondhand != null && secondhand.controller != null
-            && secondhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu)))
+        if ((Input.GetKeyDown(KeyCode.Space)) || (scannerhand != null && scannerhand.controller != null && scannerhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+            || (
+            (secondhand != null && secondhand.controller != null
+                        && secondhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu)))
+            )
         {
             print("issue a scan");
             // remove that scanfile
@@ -77,8 +79,10 @@ public class ControllerInput : MonoBehaviour {
         }
 
         // for integration
-        if (secondhand != null && secondhand.controller != null
-           && secondhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+        if ((Input.GetKeyDown(KeyCode.I))||(
+           secondhand != null && secondhand.controller != null
+                      && secondhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+           )
         {
             print("integrate a scan");
             // second controller trigger for integration
@@ -86,8 +90,10 @@ public class ControllerInput : MonoBehaviour {
         }
 
         // for register
-        if (secondhand != null && secondhand.controller != null
-         && secondhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
+        if ((Input.GetKeyDown(KeyCode.R)) || (
+         secondhand != null && secondhand.controller != null
+                  && secondhand.controller.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
+         )
         {
             print("register a scan");
             // second controller touchpad for register
