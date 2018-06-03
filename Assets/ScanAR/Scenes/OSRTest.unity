@@ -598,7 +598,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fileName: 
   isAbsolute: 1
-  absFilePath: D:\Scans\registerTest1.ply
+  absFilePath: D:\Scans\currentScan.ply
   shader: {fileID: 4800000, guid: 9a61243d781be444b96633daa5a67f68, type: 3}
   limitCount: 65000
   rawScanVertices: []
@@ -1608,7 +1608,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2121103905
 MonoBehaviour:
   m_ObjectHideFlags: 0

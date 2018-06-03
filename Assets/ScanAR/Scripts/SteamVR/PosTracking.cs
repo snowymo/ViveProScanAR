@@ -23,7 +23,7 @@ public class PosTracking : MonoBehaviour {
     public Vector3 rigidTranslation;
     public Quaternion rigidRotation;
     public float rigidAngle, vcAngle, vtAngle1, vtAngle2;
-
+    [SerializeField]
     bool isBegin;
     // Use this for initialization
     void Start () {
@@ -66,48 +66,57 @@ public class PosTracking : MonoBehaviour {
         return Quaternion.Angle(q1, q2);
     }
 
+    Vector3 prevVT1, prevVT2, prevVC, curVT1, curVT2, curVC;
+    float threshold = 0.0005f;
     // Update is called once per frame
     void Update () {
-
-        if (!isBegin)
+        // record the beginning place as the first point sets
+        if (vivetracker1.GetComponent<SteamVR_TrackedObject>().isValid && vivecontroller1.GetComponent<SteamVR_TrackedObject>().isValid)
         {
-            // record the beginning place as the first point sets
-            if (vivetracker1.GetComponent<SteamVR_TrackedObject>().isValid)
+            curVC = vivecontroller1.position;
+            curVT1 = vivetracker1.position;
+            curVT2 = vivetracker2.position;
+
+            // check if dis btw last and prev is smaller than threshold
+            if (Vector3.Distance(prevVT1, curVT1) < threshold && Vector3.Distance(prevVT2, curVT2) < threshold && Vector3.Distance(prevVC, curVC) < threshold)
             {
-                vcPos = vivecontroller1.position;
-                vtPos = vivetracker1.position;
-                vtPos2 = vivetracker2.position;
+                if (!isBegin)
+                {
+                    pointSetA.Add(curVC);
+                    pointSetA.Add(curVT1);
+                    pointSetA.Add(curVT2);
 
-                pointSetA.Add(vcPos);
-                pointSetA.Add(vtPos);
-                pointSetA.Add(vtPos2);
+                    vcRot = vivecontroller1.rotation;
+                    vtRot1 = vivetracker1.rotation;
+                    vtRot2 = vivetracker2.rotation;
 
-                vcRot = vivecontroller1.rotation;
-                vtRot1 = vivetracker1.rotation;
-                vtRot2 = vivetracker2.rotation;
+                    isBegin = true;
+                }
 
-                isBegin = true;
+                if (isBegin)
+                {
+                    pointSetB.Clear();
+                    // get current position pair
+                    vcNewPos = vivecontroller1.position;
+                    vtNewPos = vivetracker1.position;
+                    vtNewPos2 = vivetracker2.position;
+                    pointSetB.Add(vcNewPos);    pointSetB.Add(vtNewPos);     pointSetB.Add(vtNewPos2);
+                    // apply rigid transformation
+                    float[] fTransformation = new float[16];
+                    Calib(getFloatArray(pointSetA), getFloatArray(pointSetB), pointSetB.Count * 3, fTransformation);
+                    toMatrix(fTransformation, ref rigidTransform);
+                    rigidTranslation = rigidTransform.GetPosition();
+                    rigidRotation = rigidTransform.GetRotation();
+                    rigidAngle = Quaternion.Angle(rigidRotation, Quaternion.identity);
+
+                    vcAngle = CalculateAngle(vcRot, vivecontroller1.rotation);
+                    vtAngle1 = CalculateAngle(vtRot1, vivetracker1.rotation);
+                    vtAngle2 = CalculateAngle(vtRot2, vivetracker2.rotation);
+                }   
             }
+            prevVC = curVC;
+            prevVT1 = curVT1;
+            prevVT2 = curVT2;
         }
-
-        pointSetB.Clear();
-        // get current position pair
-        vcNewPos = vivecontroller1.position;
-        vtNewPos = vivetracker1.position;
-        vtNewPos2 = vivetracker2.position;
-        pointSetB.Add(vcNewPos);
-        pointSetB.Add(vtNewPos);
-        pointSetB.Add(vtNewPos2);
-        // apply rigid transformation
-        float[] fTransformation = new float[16];
-        Calib(getFloatArray(pointSetA), getFloatArray(pointSetB), pointSetB.Count*3, fTransformation);
-        toMatrix(fTransformation, ref rigidTransform);
-        rigidTranslation = rigidTransform.GetPosition();
-        rigidRotation = rigidTransform.GetRotation();
-        rigidAngle = Quaternion.Angle(rigidRotation, Quaternion.identity);
-
-        vcAngle = CalculateAngle(vcRot, vivecontroller1.rotation);
-        vtAngle1 = CalculateAngle(vtRot1, vivetracker1.rotation);
-        vtAngle2 = CalculateAngle(vtRot2, vivetracker2.rotation);
     }
 }

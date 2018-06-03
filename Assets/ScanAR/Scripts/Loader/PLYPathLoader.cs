@@ -134,7 +134,7 @@ public class PLYPathLoader : MonoBehaviour {
                 Vector3[] vertices = mesh.vertices;
                 //print("originialVertices:" + originialVertices[0]);
                 int i = 0;
-                while (i < Mathf.Min(65535, vertices.Length))
+                while (i < Mathf.Min(65000, vertices.Length))
                 {
                     Vector3 VviveScale = plyObjs[plyObji].originalVertices[i] * vivescale;
                     // looks like points don't need that?
@@ -151,7 +151,7 @@ public class PLYPathLoader : MonoBehaviour {
                         // calculate average
                         Vector3 scVertex = (curTracker * initialSecTracker.inverse * curScanController * originalSCtoDMatrix).MultiplyPoint(VviveScale);
                         Vector3 stVertex = (curTracker * initialSecTracker.inverse * curScanTracker * originalSTtoDMatrix).MultiplyPoint(VviveScale);
-                        vertices[i] = (scVertex + stVertex) / 2f;
+                        vertices[i] = stVertex;// (scVertex + stVertex) / 2f;
                         if (i == 0)
                         {
                             // calculate the diff

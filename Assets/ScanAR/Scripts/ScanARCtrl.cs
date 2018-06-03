@@ -37,7 +37,7 @@ public class ScanARCtrl : MonoBehaviour {
         Utility.InitialIndices();
         isJustIssueScan = false;
         print("before create OSRdata");
-        OSRdata = OSRDLL.CreateOSRData();
+        OSRdata = OSRDLL.GetOSRData();
         print("OSRdata addr:" + OSRdata);
         scanAmount = 0;
     }
