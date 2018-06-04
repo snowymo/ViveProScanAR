@@ -71,7 +71,7 @@ public class OSRDLL : MonoBehaviour {
 
     
 
-    public static void OSRIntegrate(IntPtr osrData, IntPtr scan, ref Vector3[] vertices, ref Color32[] colors, ref uint[] faces)
+    public static void OSRIntegrate(IntPtr osrData, ref IntPtr scan, ref Vector3[] vertices, ref Color32[] colors, ref uint[] faces)
     {
         
         int vAmt, cAmt, fAmt;
@@ -119,5 +119,8 @@ public class OSRDLL : MonoBehaviour {
             faces[i] = (uint)Marshal.PtrToStructure(p, typeof(uint));
             p += Marshal.SizeOf(typeof(uint)); // move to next structure
         }
+
+        // there is no more seperate control of this scan, actually it is remove in dll side
+        scan = IntPtr.Zero;
     }
 }

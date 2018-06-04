@@ -38,7 +38,7 @@ public class OSRDllTest : MonoBehaviour {
     {
         float prevTime = Time.realtimeSinceStartup;
 
-        OSRDLL.OSRIntegrate(OSRdata, curAddedScan, ref integratedVerts, ref integratedColors, ref integratedFaces);// later it will become vectors of the data for each mesh
+        OSRDLL.OSRIntegrate(OSRdata, ref curAddedScan, ref integratedVerts, ref integratedColors, ref integratedFaces);// later it will become vectors of the data for each mesh
         //--scanAmount;
         // modify the data of current scan
         
@@ -56,7 +56,8 @@ public class OSRDllTest : MonoBehaviour {
     public void RegisterScan()
     {
         Matrix4x4 resTrans = Matrix4x4.identity;
-        OSRDLL.OSRRegister(OSRdata, curAddedScan, ref resTrans);
+        if(curAddedScan != IntPtr.Zero)
+            OSRDLL.OSRRegister(OSRdata, curAddedScan, ref resTrans);
         print("after Register() " + resTrans.ToString("F3"));
         // need to apply to all vertices
     }

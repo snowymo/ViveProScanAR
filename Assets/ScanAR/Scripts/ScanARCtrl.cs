@@ -100,7 +100,7 @@ public class ScanARCtrl : MonoBehaviour {
     {
         float prevTime = Time.realtimeSinceStartup;
 
-        OSRDLL.OSRIntegrate(OSRdata, curAddedScan, ref integratedVerts, ref integratedColors, ref integratedFaces);// later it will become vectors of the data for each mesh
+        OSRDLL.OSRIntegrate(OSRdata, ref curAddedScan, ref integratedVerts, ref integratedColors, ref integratedFaces);// later it will become vectors of the data for each mesh
         //--scanAmount;
         // modify the data of current scan
         GameObject curScan = scans[scans.Count - 1];
