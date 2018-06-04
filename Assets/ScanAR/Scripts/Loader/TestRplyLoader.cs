@@ -93,6 +93,7 @@ public class TestRplyLoader : MonoBehaviour {
     }
     public Vector3[] rawScanVertices;
     public Color32[] rawScanColors;
+    public PlyLoaderDll.LABCOLOR[] rawScanLabColors;
     public uint[] rawScanFaces;
     public void LoadMeshesDirectly()
     {
@@ -107,6 +108,7 @@ public class TestRplyLoader : MonoBehaviour {
         Mesh mesh = new Mesh();
         rawScanVertices = PlyLoaderDll.GetRVertices(plyIntPtr);
         rawScanColors = PlyLoaderDll.GetRColors(plyIntPtr);
+        rawScanLabColors = PlyLoaderDll.GetRColorsLAB(plyIntPtr);
         rawScanFaces = PlyLoaderDll.GetRIndexs(plyIntPtr);
         PlyLoaderDll.UnLoadPly(plyIntPtr);
 

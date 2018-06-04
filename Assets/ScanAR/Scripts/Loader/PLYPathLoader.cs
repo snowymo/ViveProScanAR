@@ -17,6 +17,7 @@ public class PLYPathLoader : MonoBehaviour {
 
     public Vector3[] rawScanVertices;
     public Color32[] rawScanColors;
+    public PlyLoaderDll.LABCOLOR[] rawScanLabColors;
     public uint[] rawScanFaces;
 
     public Matrix4x4 originalMatrix, originalSCtoDMatrix, originalSTtoDMatrix;
@@ -569,6 +570,7 @@ public class PLYPathLoader : MonoBehaviour {
         Mesh mesh = new Mesh();
         rawScanVertices = PlyLoaderDll.GetRVertices(plyIntPtr);
         rawScanColors = PlyLoaderDll.GetRColors(plyIntPtr);
+        rawScanLabColors = PlyLoaderDll.GetRColorsLAB(plyIntPtr);
         rawScanFaces = PlyLoaderDll.GetRIndexs(plyIntPtr);
         PlyLoaderDll.UnLoadPly(plyIntPtr);
 
@@ -595,6 +597,7 @@ public class PLYPathLoader : MonoBehaviour {
         Mesh mesh = new Mesh();
         rawScanVertices = PlyLoaderDll.GetRVertices(plyIntPtr);
         rawScanColors = PlyLoaderDll.GetRColors(plyIntPtr);
+        rawScanLabColors = PlyLoaderDll.GetRColorsLAB(plyIntPtr);
         rawScanFaces = PlyLoaderDll.GetRIndexs(plyIntPtr);
         PlyLoaderDll.UnLoadPly(plyIntPtr);
 

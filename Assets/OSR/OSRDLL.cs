@@ -13,7 +13,9 @@ public class OSRDLL : MonoBehaviour {
     public static extern void DestroyOSRData(IntPtr osrIntPtr);
 
     [DllImport("OSR")]
-    public static extern IntPtr AddScan(IntPtr osrData, Vector3[] vertices, Color32[] colors, uint[] faces, float[] fTransform, int verCnt, int faceCnt);
+    public static extern IntPtr AddScan(IntPtr osrData, Vector3[] vertices, PlyLoaderDll.LABCOLOR[] colors, uint[] faces, float[] fTransform, int verCnt, int faceCnt);
+    [DllImport("OSR")]
+    public static extern IntPtr AddOldScan(IntPtr osrData, Vector3[] vertices, Color32[] colors, uint[] faces, float[] fTransform, int verCnt, int faceCnt);
 
     [DllImport("OSR")]
     public static extern void Integrate(IntPtr osrData, IntPtr scan);
@@ -37,7 +39,7 @@ public class OSRDLL : MonoBehaviour {
         return _osrInstance;
     }
 
-    public static IntPtr OSRAddScan(IntPtr osrData, Vector3[] vertices, Color32[] colors, uint[] faces, Matrix4x4 mTransform)
+    public static IntPtr OSRAddScan(IntPtr osrData, Vector3[] vertices, PlyLoaderDll.LABCOLOR[] colors, uint[] faces, Matrix4x4 mTransform)
     {
         int vertCnt = vertices.Length;
         int faceCnt = faces.Length / 3;
@@ -45,6 +47,15 @@ public class OSRDLL : MonoBehaviour {
         for (int i = 0; i < transformation.Length; i++)
             transformation[i] = mTransform[i % 4, i / 4];
         return AddScan(osrData, vertices, colors, faces, transformation, vertCnt, faceCnt);
+    }
+    public static IntPtr OSRAddOldScan(IntPtr osrData, Vector3[] vertices, Color32[] colors, uint[] faces, Matrix4x4 mTransform)
+    {
+        int vertCnt = vertices.Length;
+        int faceCnt = faces.Length / 3;
+        float[] transformation = new float[16];
+        for (int i = 0; i < transformation.Length; i++)
+            transformation[i] = mTransform[i % 4, i / 4];
+        return AddOldScan(osrData, vertices, colors, faces, transformation, vertCnt, faceCnt);
     }
 
     public static void OSRRegister(IntPtr osrData, IntPtr scan, ref Matrix4x4 newTrans)
@@ -58,44 +69,50 @@ public class OSRDLL : MonoBehaviour {
         }
     }
 
+    
+
     public static void OSRIntegrate(IntPtr osrData, IntPtr scan, ref Vector3[] vertices, ref Color32[] colors, ref uint[] faces)
     {
         
         int vAmt, cAmt, fAmt;
         Debug.Log("before OSRIntegrate");
+
+        float prevTime = Time.realtimeSinceStartup;
         Integrate( osrData,  scan);
-        
+        float curTime = Time.realtimeSinceStartup;
+        Debug.Log("Integrate + extract took:" + (curTime - prevTime) + "s");
+
         // need to know the amount
         /*Marshal.Copy(fVerts, verts, 0, count);*/
+        prevTime = Time.realtimeSinceStartup;
         IntPtr vPointer = GetIntegratedVerts(osrData, out vAmt);
-        Debug.Log("OSRIntegrate: " + vAmt + " verts");
+        IntPtr cPointer = GetIntegratedColors(osrData, out cAmt);
+        curTime = Time.realtimeSinceStartup;
+        Debug.Log("OSRIntegrate verts/colors: " + vAmt + " verts :" + (curTime-prevTime) + "s" );
+
+        prevTime = Time.realtimeSinceStartup;
         vertices = new Vector3[vAmt];
+        colors = new Color32[cAmt];
         /*Marshal.Copy(vPointer, vertices, 0, vAmt);*/
-        IntPtr p = vPointer;
+        IntPtr vp = vPointer, cp = cPointer;
         for (int i = 0; i < vAmt; i++)
         {
             //Marshal.PtrToStructure(p, vertices[i]);
-            vertices[i] = (Vector3)Marshal.PtrToStructure(p, typeof(Vector3));
-            p += Marshal.SizeOf(typeof(Vector3)); // move to next structure
-        }
+            vertices[i] = (Vector3)Marshal.PtrToStructure(vp, typeof(Vector3));
+            vp += Marshal.SizeOf(typeof(Vector3)); // move to next structure
 
-        IntPtr cPointer = GetIntegratedColors(osrData, out cAmt);
-        Debug.Log("OSRIntegrate: " + cAmt + " colors");
-        colors = new Color32[cAmt];
-        //Marshal.Copy(cPointer, colors, 0, cAmt);
-        p = cPointer;
-        for (int i = 0; i < cAmt; i++)
-        {
             //Marshal.PtrToStructure(p, colors[i]);
-            colors[i] = (Color32)Marshal.PtrToStructure(p, typeof(Color32));
-            p += Marshal.SizeOf(typeof(Color32)); // move to next structure
+            colors[i] = (Color32)Marshal.PtrToStructure(cp, typeof(Color32));
+            cp += Marshal.SizeOf(typeof(Color32)); // move to next structure
         }
-        print(" colors[i] " + colors[100] + " " + colors[200]);
+        curTime = Time.realtimeSinceStartup;
+        Debug.Log("OSRIntegrate verts/colors copy: " + (curTime - prevTime) + "s");
+
         IntPtr fPointer = GetIntegratedIndices(osrData, out fAmt);
         Debug.Log("OSRIntegrate: " + fAmt + " faces");
         faces = new uint[fAmt*3];
         //Marshal.Copy(fPointer, faces, 0, fAmt * 3);
-        p = fPointer;
+        IntPtr p = fPointer;
         for (int i = 0; i < fAmt*3; i++)
         {
             //Marshal.PtrToStructure(p, faces[i]);

@@ -170,7 +170,7 @@ public class ScanARCtrl : MonoBehaviour {
             // IntPtr OSRAddScan(IntPtr osrData, Vector3[] vertices, Color32[] colors, uint[] faces, Matrix4x4 mTransform)
             PLYPathLoader ppl = scans[scans.Count - 1].transform.GetComponent<PLYPathLoader>();
             print("ppl.rawScanColors:" + ppl.rawScanColors[0].ToString("F3") + " " + ppl.rawScanColors[100].ToString("F3"));
-            curAddedScan = OSRDLL.OSRAddScan(OSRdata, ppl.rawScanVertices, ppl.rawScanColors, ppl.rawScanFaces, ppl.originalSCtoDMatrix);
+            curAddedScan = OSRDLL.OSRAddScan(OSRdata, ppl.rawScanVertices, ppl.rawScanLabColors, ppl.rawScanFaces, ppl.originalSCtoDMatrix);
             print("curAddedScan address:" + curAddedScan);
             ++scanAmount;
         }

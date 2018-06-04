@@ -26,7 +26,8 @@ public class OSRDllTest : MonoBehaviour {
     public void AddScan()
     {
         TestRplyLoader ppl = GetComponent<TestRplyLoader>();
-        curAddedScan = OSRDLL.OSRAddScan(OSRdata, ppl.rawScanVertices, ppl.rawScanColors, ppl.rawScanFaces, Matrix4x4.identity);
+        curAddedScan = OSRDLL.OSRAddScan(OSRdata, ppl.rawScanVertices, ppl.rawScanLabColors, ppl.rawScanFaces, Matrix4x4.identity);
+        //curAddedScan = OSRDLL.OSRAddOldScan(OSRdata, ppl.rawScanVertices, ppl.rawScanColors, ppl.rawScanFaces, Matrix4x4.identity);
         print("curAddedScan address:" + curAddedScan);
     }
 
