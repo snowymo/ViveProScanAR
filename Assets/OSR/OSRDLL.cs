@@ -28,6 +28,8 @@ public class OSRDLL : MonoBehaviour {
 
     //
     [DllImport("OSR")]
+    public static extern void SetSplitBound(IntPtr osrData, int bound);
+    [DllImport("OSR")]
     public static extern int GetIntegrateAmount(IntPtr osrData);
     [DllImport("OSR")]
     public static extern IntPtr GetIntegratedVertsByIdx(IntPtr osrData, int index, out int count);
@@ -141,6 +143,8 @@ public class OSRDLL : MonoBehaviour {
         int vAmt, cAmt, fAmt;
         Debug.Log("before OSRIntegrate");
 
+        // set bound
+        SetSplitBound(osrData, 64995);
         float prevTime = Time.realtimeSinceStartup;
         Integrate(osrData, scan);
         float curTime = Time.realtimeSinceStartup;
