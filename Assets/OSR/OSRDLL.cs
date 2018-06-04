@@ -26,6 +26,17 @@ public class OSRDLL : MonoBehaviour {
     [DllImport("OSR")]
     public static extern IntPtr GetIntegratedIndices(IntPtr osrData, out int count);
 
+    //
+    [DllImport("OSR")]
+    public static extern int GetIntegrateAmount(IntPtr osrData);
+    [DllImport("OSR")]
+    public static extern IntPtr GetIntegratedVertsByIdx(IntPtr osrData, int index, out int count);
+    [DllImport("OSR")]
+    public static extern IntPtr GetIntegratedColorsByIdx(IntPtr osrData, int index, out int count);
+    [DllImport("OSR")]
+    public static extern IntPtr GetIntegratedIndicesByIdx(IntPtr osrData, int index, out int count);
+    //
+
     [DllImport("OSR")]
     public static extern IntPtr Register(IntPtr osrData, IntPtr scan);
 
@@ -71,7 +82,7 @@ public class OSRDLL : MonoBehaviour {
 
     
 
-    public static void OSRIntegrate(IntPtr osrData, ref IntPtr scan, ref Vector3[] vertices, ref Color32[] colors, ref uint[] faces)
+    public static void OSROldIntegrate(IntPtr osrData, ref IntPtr scan, ref Vector3[] vertices, ref Color32[] colors, ref uint[] faces)
     {
         
         int vAmt, cAmt, fAmt;
@@ -119,6 +130,66 @@ public class OSRDLL : MonoBehaviour {
             faces[i] = (uint)Marshal.PtrToStructure(p, typeof(uint));
             p += Marshal.SizeOf(typeof(uint)); // move to next structure
         }
+
+        // there is no more seperate control of this scan, actually it is remove in dll side
+        scan = IntPtr.Zero;
+    }
+
+    public static void OSRIntegrate(IntPtr osrData, ref IntPtr scan, ref List<Vector3[]> vertices, ref List<Color32[]> colors, ref List<uint[]> faces)
+    {
+
+        int vAmt, cAmt, fAmt;
+        Debug.Log("before OSRIntegrate");
+
+        float prevTime = Time.realtimeSinceStartup;
+        Integrate(osrData, scan);
+        float curTime = Time.realtimeSinceStartup;
+        Debug.Log("Integrate + extract took:" + (curTime - prevTime) + "s");
+
+        int integrateAmt = GetIntegrateAmount(osrData);
+        for(int integIdx = 0; integIdx < integrateAmt; integIdx++)
+        {
+            /*Marshal.Copy(fVerts, verts, 0, count);*/
+            prevTime = Time.realtimeSinceStartup;
+            IntPtr vPointer = GetIntegratedVertsByIdx(osrData, integIdx, out vAmt);
+            IntPtr cPointer = GetIntegratedColorsByIdx(osrData, integIdx, out cAmt);
+            curTime = Time.realtimeSinceStartup;
+            Debug.Log("OSRIntegrate verts/colors: " + vAmt + " verts :" + (curTime - prevTime) + "s");
+
+            prevTime = Time.realtimeSinceStartup;
+            Vector3[] subvertices = new Vector3[vAmt];
+            Color32[] subcolors = new Color32[cAmt];
+            /*Marshal.Copy(vPointer, vertices, 0, vAmt);*/
+            IntPtr vp = vPointer, cp = cPointer;
+            for (int i = 0; i < vAmt; i++)
+            {
+                //Marshal.PtrToStructure(p, vertices[i]);
+                subvertices[i] = (Vector3)Marshal.PtrToStructure(vp, typeof(Vector3));
+                vp += Marshal.SizeOf(typeof(Vector3)); // move to next structure
+
+                //Marshal.PtrToStructure(p, colors[i]);
+                subcolors[i] = (Color32)Marshal.PtrToStructure(cp, typeof(Color32));
+                cp += Marshal.SizeOf(typeof(Color32)); // move to next structure
+            }
+            curTime = Time.realtimeSinceStartup;
+            Debug.Log("OSRIntegrate verts/colors copy: " + (curTime - prevTime) + "s");
+
+            IntPtr fPointer = GetIntegratedIndicesByIdx(osrData, integIdx, out fAmt);
+            Debug.Log("OSRIntegrate: " + fAmt + " faces");
+            uint[] subfaces = new uint[fAmt * 3];
+            //Marshal.Copy(fPointer, faces, 0, fAmt * 3);
+            IntPtr p = fPointer;
+            for (int i = 0; i < fAmt * 3; i++)
+            {
+                //Marshal.PtrToStructure(p, faces[i]);
+                subfaces[i] = (uint)Marshal.PtrToStructure(p, typeof(uint));
+                p += Marshal.SizeOf(typeof(uint)); // move to next structure
+            }
+
+            vertices.Add(subvertices);
+            colors.Add(subcolors);
+            faces.Add(subfaces);
+        }   
 
         // there is no more seperate control of this scan, actually it is remove in dll side
         scan = IntPtr.Zero;

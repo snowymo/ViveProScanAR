@@ -29,8 +29,12 @@ public class ScanARCtrl : MonoBehaviour {
     Color32[] integratedColors;
     uint[] integratedFaces;
 
+    List<Vector3[]> splitIntVerts;
+    List<Color32[]> splitIntColors;
+    List<uint[]> splitIntFaces;
 
-        // Use this for initialization
+
+    // Use this for initialization
     void Start () {
         scans = new List<GameObject>();
         packetId = -1;
@@ -40,6 +44,11 @@ public class ScanARCtrl : MonoBehaviour {
         OSRdata = OSRDLL.GetOSRData();
         print("OSRdata addr:" + OSRdata);
         scanAmount = 0;
+
+        splitIntVerts = new List<Vector3[]>();
+        splitIntColors = new List<Color32[]>();
+        splitIntFaces = new List<uint[]>();
+
     }
 
     void ZMQhandle()
@@ -100,7 +109,9 @@ public class ScanARCtrl : MonoBehaviour {
     {
         float prevTime = Time.realtimeSinceStartup;
 
-        OSRDLL.OSRIntegrate(OSRdata, ref curAddedScan, ref integratedVerts, ref integratedColors, ref integratedFaces);// later it will become vectors of the data for each mesh
+        //OSRDLL.OSROldIntegrate(OSRdata, ref curAddedScan, ref integratedVerts, ref integratedColors, ref integratedFaces);// later it will become vectors of the data for each mesh
+        // TODO
+        OSRDLL.OSRIntegrate(OSRdata, ref curAddedScan, ref splitIntVerts, ref splitIntColors, ref splitIntFaces);// later it will become vectors of the data for each mesh
         //--scanAmount;
         // modify the data of current scan
         GameObject curScan = scans[scans.Count - 1];
