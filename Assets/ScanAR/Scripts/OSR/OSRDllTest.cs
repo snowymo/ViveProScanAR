@@ -78,7 +78,7 @@ public class OSRDllTest : MonoBehaviour {
             Color32[] curColors = curController.curInstance.getCurrentMeshData().colorsPieces[i];
             uint[] curFaces = curController.curInstance.getCurrentMeshData().facesPieces[i];
             Utility.createMesh(curVerts.Length, ref curVerts, ref curColors, curFaces.Length, ref curFaces,
-                ref curController.updateGOs, curController.gameObject.transform, curController.shader);
+                ref curController.updateGOs, curController.parentTracker, curController.shader);
         }
         
         curTime = Time.realtimeSinceStartup;
@@ -93,12 +93,29 @@ public class OSRDllTest : MonoBehaviour {
             float prevTime = Time.realtimeSinceStartup;
             OSRDLL.OSRRegister(OSRdata, curAddedScan, ref curController.curInstance.registerMtx);
             float curTime = Time.realtimeSinceStartup;
-            print("after Register() " + (curTime-prevTime) + "s\t" + curController.curInstance.registerMtx.ToString("F3"));
+            Vector3 regPos = curController.curInstance.registerMtx.GetPosition();
+            Quaternion regRot = curController.curInstance.registerMtx.GetRotation();
 
-            prevTime = Time.realtimeSinceStartup;
-            curController.curInstance.AfterRegister();
-            curTime = Time.realtimeSinceStartup;
-            print("apply Register() transformation " + (curTime - prevTime) + "s");
+            print("after Register() " + (curTime-prevTime) + "s\t" + curController.curInstance.registerMtx.ToString("F3"));
+            print("reg pos:" + regPos.ToString("F3"));
+            print("reg rot:" + regRot.eulerAngles.ToString("F3"));
+
+            // right hand to left hand
+            curController.curInstance.registerMtx[0, 2] *= -1f;
+            curController.curInstance.registerMtx[1, 2] *= -1f;
+            curController.curInstance.registerMtx[2, 0] *= -1f;
+            curController.curInstance.registerMtx[2, 1] *= -1f;
+            curController.curInstance.registerMtx[2, 3] *= -1f;
+            curController.curInstance.registerMtx[3, 2] *= -1f;
+            regPos = curController.curInstance.registerMtx.GetPosition();
+            regRot = curController.curInstance.registerMtx.GetRotation();
+            print(" lf reg pos:" + regPos.ToString("F3"));
+            print(" lf reg rot:" + regRot.eulerAngles.ToString("F3"));
+
+//             prevTime = Time.realtimeSinceStartup;
+//             curController.curInstance.AfterRegister();
+//             curTime = Time.realtimeSinceStartup;
+//             print("apply Register() transformation " + (curTime - prevTime) + "s");
         }
 
         // need to apply to all vertices
