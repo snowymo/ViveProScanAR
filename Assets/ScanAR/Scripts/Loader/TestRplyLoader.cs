@@ -14,7 +14,7 @@ public class TestRplyLoader : MonoBehaviour {
 
     int[] indices;
 
-    List<GameObject> gos = new List<GameObject>();
+    public List<GameObject> gos = new List<GameObject>();
 
     float curTime, prevTime;
 
@@ -69,6 +69,7 @@ public class TestRplyLoader : MonoBehaviour {
         mr.material = new Material(shader);
     }
 
+    UpdateCtrl curController;
 
     void loadPLYDownSample()
     {
@@ -105,6 +106,7 @@ public class TestRplyLoader : MonoBehaviour {
         if (plyIntPtr == null)
             return;
 
+        
         Mesh mesh = new Mesh();
         rawScanVertices = PlyLoaderDll.GetRVertices(plyIntPtr);
         rawScanColors = PlyLoaderDll.GetRColors(plyIntPtr);
@@ -112,11 +114,11 @@ public class TestRplyLoader : MonoBehaviour {
         rawScanFaces = PlyLoaderDll.GetRIndexs(plyIntPtr);
         PlyLoaderDll.UnLoadPly(plyIntPtr);
 
-        int meshCount = rawScanVertices.Length / Utility.limitCount + 1;
-        for (int i = 0; i < meshCount; i++)
-        {
-            createMesh(i, Math.Min(Utility.limitCount, rawScanVertices.Length - i * Utility.limitCount), ref rawScanVertices, ref rawScanColors);
-        }
+        // pass to UpdateCtrl.ScanARData to do
+        if(curController == null)
+            curController = GetComponent<UpdateCtrl>();
+        curController.AddDavidData(rawScanVertices, rawScanColors, rawScanLabColors, rawScanFaces);
+        
 
     }
 
@@ -163,49 +165,10 @@ public class TestRplyLoader : MonoBehaviour {
         mr.material = new Material(shader);
     }
 
-    void createMesh(int startIdx, int verticeCnt, ref Vector3[] vertex, ref Color32[] color)
-    {
-        Mesh mesh = new Mesh();
-        //mesh.vertices = new Vector3[verticeCnt];
-
-        Vector3[] curV = new Vector3[verticeCnt];
-        Array.Copy(vertex, startIdx * Utility.limitCount, curV, 0, verticeCnt);
-        mesh.vertices = curV;
-
-        Color32[] curC = new Color32[verticeCnt];
-        Array.Copy(color, startIdx * Utility.limitCount, curC, 0, verticeCnt);
-        mesh.colors32 = curC;
-
-        if (Utility.indices.Length > verticeCnt)
-        {
-            int[] subindices = new int[verticeCnt];
-            Array.Copy(Utility.indices, subindices, verticeCnt);
-            mesh.SetIndices(subindices, MeshTopology.Points, 0);
-        }
-        else
-            mesh.SetIndices(Utility.indices, MeshTopology.Points, 0);
-        mesh.name = "mesh" + startIdx.ToString();
-
-//         PLYObj plyObj = new PLYObj();
-// 
-//         plyObj.originalVertices = curV;
-//         plyObj.origianlColors = curC;
-// 
-//         plyObjs.Add(plyObj);
-
-        GameObject go = new GameObject("go" + startIdx.ToString());
-        go.transform.parent = transform;
-        gos.Add(go);
-
-        MeshFilter mf = go.AddComponent<MeshFilter>();
-        mf.mesh = mesh;
-
-        MeshRenderer mr = go.AddComponent<MeshRenderer>();
-        mr.material = new Material(shader);
-    }
+    
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
         //         indices = new int[limitCount];
         //         for (int i = 0; i < limitCount; i++)
         //         {
@@ -217,6 +180,9 @@ public class TestRplyLoader : MonoBehaviour {
         LoadMeshesDirectly();
         curTime = Time.realtimeSinceStartup;
         print("whole took " + (curTime - prevTime) + "s");
+
+        if (curController == null)
+            curController = GetComponent<UpdateCtrl>();
     }
 	
 	// Update is called once per frame

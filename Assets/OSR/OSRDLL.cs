@@ -73,7 +73,10 @@ public class OSRDLL : MonoBehaviour {
 
     public static void OSRRegister(IntPtr osrData, IntPtr scan, ref Matrix4x4 newTrans)
     {
+        float prevTime = Time.realtimeSinceStartup;
         IntPtr mPointer = Register(osrData, scan);
+        float curTime = Time.realtimeSinceStartup;
+        Debug.Log("Register took:" + (curTime - prevTime) + "s");
         float[] newFloats = new float[16];
         Marshal.Copy(mPointer, newFloats, 0, 16);
         for(int i = 0; i < 16; i++)

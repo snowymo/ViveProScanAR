@@ -316,6 +316,9 @@
     <Reference Include="UnityEngine.StandardEvents">
       <HintPath>C:/ProgramData/Unity/cache/packages/packages.unity.com/com.unity.standardevents@1.0.10/UnityEngine.StandardEvents.dll</HintPath>
     </Reference>
+    <Reference Include="Parallel">
+      <HintPath>Assets/Parallel/Plugins/Parallel.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="ViveProTest.csproj">
@@ -335,6 +338,7 @@
     <Compile Include="Assets\ViveSR\Scripts\Editor\ReconstructedAssetImporter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Parallel\Plugins\Parallel.xml" />
     <None Include="Assets\ScanAR\Scripts\Shaders\PointCloudShader.shader" />
     <None Include="Assets\ScanAR\Scripts\Shaders\SimpleVertex.shader" />
     <None Include="Assets\ScanAR\Scripts\Shaders\VertexColor.shader" />
