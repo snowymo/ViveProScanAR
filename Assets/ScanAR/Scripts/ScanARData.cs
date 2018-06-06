@@ -37,12 +37,7 @@ public class ScanARData {
 
     public void AfterRegister()
     {
-        // right hand to left hand
-        registerMtx[0, 2] *= -1f;
-        registerMtx[1, 2] *= -1f;
-        registerMtx[2, 0] *= -1f;
-        registerMtx[2, 1] *= -1f;
-        registerMtx[2, 3] *= -1f;
+        
 
         // apply registerMtx to all vertices;
         for (int i = 0; i < curData[(int)curState].verticesPieces.Count; i++)
@@ -86,7 +81,8 @@ public class ScanARData {
         {
             curData[(int)curState].vertices[i] *= 0.001f;
             curData[(int)curState].vertices[i].z *= -1f;
-            curData[(int)curState].vertices[i] = (curScanTracker * matrixST2David).MultiplyPoint(curData[(int)curState].vertices[i]);
+            // test this
+            //curData[(int)curState].vertices[i] = (curScanTracker * matrixST2David).MultiplyPoint(curData[(int)curState].vertices[i]);
         }
     }
 

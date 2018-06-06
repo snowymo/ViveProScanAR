@@ -28,6 +28,8 @@ public class UpdateCtrl : MonoBehaviour {
 
     public List<GameObject> updateGOs;
 
+    public Transform parentTracker;
+
     public ScanARData curInstance;
 
     public void AddDavidData(Vector3[] rawScanVertices,Color32[] rawScanColors, PlyLoaderDll.LABCOLOR[] rawScanLabColors, uint[] rawScanFaces)
@@ -95,7 +97,7 @@ public class UpdateCtrl : MonoBehaviour {
         int meshCount = curInstance.curData[(int)curInstance.curState].vertices.Length / Utility.limitCount + 1;
         for (int i = 0; i < meshCount; i++)
         {
-            Utility.createMesh(i, Math.Min(Utility.limitCount, iniScanVertices.Length - i * Utility.limitCount), ref curInstance, ref updateGOs, transform, shader);
+            Utility.createMesh(i, Math.Min(Utility.limitCount, iniScanVertices.Length - i * Utility.limitCount), ref curInstance, ref updateGOs, parentTracker, shader);
             
         }
         print("the amount of mesh is " + updateGOs.Count);
@@ -119,18 +121,18 @@ public class UpdateCtrl : MonoBehaviour {
             return;
         }
         //Matrix4x4 diffreg = diff * curInstance.registerMtx;
-        for (int i = 0; i < updateGOs.Count; i++)
-        {
-            Mesh mesh = updateGOs[i].GetComponent<MeshFilter>().mesh;
-            Vector3[] verts = mesh.vertices;
-            Vector3[] curRawVerts = curInstance.curData[(int)curInstance.curState].verticesPieces[i];
-            for (int j = 0; j < curRawVerts.Length; j++)
-            {
-                verts[j] = diff.MultiplyPoint(curRawVerts[j]);
-                //verts[i] = Vector3.zero;
-            }
-            mesh.vertices = verts;
-        }
+//         for (int i = 0; i < updateGOs.Count; i++)
+//         {
+//             Mesh mesh = updateGOs[i].GetComponent<MeshFilter>().mesh;
+//             Vector3[] verts = mesh.vertices;
+//             Vector3[] curRawVerts = curInstance.curData[(int)curInstance.curState].verticesPieces[i];
+//             for (int j = 0; j < curRawVerts.Length; j++)
+//             {
+//                 verts[j] = diff.MultiplyPoint(curRawVerts[j]);
+//                 //verts[i] = Vector3.zero;
+//             }
+//             mesh.vertices = verts;
+//         }
     }
 
     public void RecordSTMatrix()

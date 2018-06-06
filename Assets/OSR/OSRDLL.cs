@@ -13,6 +13,11 @@ public class OSRDLL : MonoBehaviour {
     public static extern void DestroyOSRData(IntPtr osrIntPtr);
 
     [DllImport("OSR")]
+    public static extern void SetScale(IntPtr osrIntPtr, float scale);
+    [DllImport("OSR")]
+    public static extern void SetMaxRegError(IntPtr osrIntPtr, float maxError);
+
+    [DllImport("OSR")]
     public static extern IntPtr AddScan(IntPtr osrData, Vector3[] vertices, PlyLoaderDll.LABCOLOR[] colors, uint[] faces, float[] fTransform, int verCnt, int faceCnt);
     [DllImport("OSR")]
     public static extern IntPtr AddOldScan(IntPtr osrData, Vector3[] vertices, Color32[] colors, uint[] faces, float[] fTransform, int verCnt, int faceCnt);
@@ -48,6 +53,9 @@ public class OSRDLL : MonoBehaviour {
         if(_osrInstance == IntPtr.Zero)
         {
             _osrInstance = CreateOSRData();
+            // set scale here, normally edge of the result is ok to be 0.05ish
+//             SetScale(_osrInstance, 0.01f);
+//             SetMaxRegError(_osrInstance, 0.02f);
         }
         return _osrInstance;
     }
