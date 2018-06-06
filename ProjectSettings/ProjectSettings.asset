@@ -717,7 +717,7 @@ PlayerSettings:
     UNet: 0
     Unity_Ads: 0
   facebookSdkVersion: 7.9.4
-  apiCompatibilityLevel: 2
+  apiCompatibilityLevel: 3
   cloudProjectId: 0102fb6f-c48e-49e4-af95-01892e94fcb2
   projectName: ViveProTest
   organizationId: snowymo

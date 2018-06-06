@@ -241,6 +241,9 @@
     <Reference Include="UnityEngine.SpatialTracking">
       <HintPath>D:/Program Files/Unity_2017.4.2f2/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
+    <Reference Include="Parallel">
+      <HintPath>Assets/Parallel/Plugins/Parallel.dll</HintPath>
+    </Reference>
     <Reference Include="AsyncIO">
       <HintPath>Assets/Plugin/AsyncIO.dll</HintPath>
     </Reference>
@@ -261,14 +264,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\OSR\OSRDLL.cs" />
+    <Compile Include="Assets\Parallel\Examples\Scripts\PerlinNoiseCPU.cs" />
     <Compile Include="Assets\PlyLoader\PlyLoaderDll.cs" />
     <Compile Include="Assets\ScanAR\Scripts\David\SystemCommand.cs" />
     <Compile Include="Assets\ScanAR\Scripts\HandShiftTransform.cs" />
     <Compile Include="Assets\ScanAR\Scripts\Loader\PLYPathLoader.cs" />
     <Compile Include="Assets\ScanAR\Scripts\Loader\TestLoader.cs" />
     <Compile Include="Assets\ScanAR\Scripts\Loader\TestRplyLoader.cs" />
+    <Compile Include="Assets\ScanAR\Scripts\OSR\OSRDllTest.cs" />
+    <Compile Include="Assets\ScanAR\Scripts\OSR\UpdateCtrl.cs" />
     <Compile Include="Assets\ScanAR\Scripts\ScanARCtrl.cs" />
+    <Compile Include="Assets\ScanAR\Scripts\ScanARData.cs" />
     <Compile Include="Assets\ScanAR\Scripts\SteamVR\ControllerInput.cs" />
+    <Compile Include="Assets\ScanAR\Scripts\SteamVR\PosTracking.cs" />
     <Compile Include="Assets\ScanAR\Scripts\SteamVR\Record.cs" />
     <Compile Include="Assets\ScanAR\Scripts\SteamVR\Tracker.cs" />
     <Compile Include="Assets\ScanAR\Scripts\SteamVR\Trackers.cs" />
@@ -469,6 +478,7 @@
     <Compile Include="Assets\ViveSR_Experience\Scripts\ViveSR_Experience_VRMode_SwitchMode.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Parallel\Plugins\Parallel.xml" />
     <None Include="Assets\ScanAR\Scripts\Shaders\PointCloudShader.shader" />
     <None Include="Assets\ScanAR\Scripts\Shaders\SimpleVertex.shader" />
     <None Include="Assets\ScanAR\Scripts\Shaders\VertexColor.shader" />

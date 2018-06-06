@@ -213,6 +213,10 @@ Prefab:
       propertyPath: secondController
       value: 
       objectReference: {fileID: 1905834913}
+    - target: {fileID: 1078350496465972, guid: 2ae42e1fdd3cbe64880711f0637b1527, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2ae42e1fdd3cbe64880711f0637b1527, type: 2}
   m_IsPrefabParent: 0
@@ -348,6 +352,10 @@ Prefab:
         type: 2}
       propertyPath: fileName
       value: integrated0.ply
+      objectReference: {fileID: 0}
+    - target: {fileID: 1512801033921850, guid: 9100459e615511b4dad46a353c296311, type: 2}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9100459e615511b4dad46a353c296311, type: 2}

@@ -6,6 +6,14 @@ using UnityEngine;
 
 public class PlyLoaderDll : MonoBehaviour
 {
+    public struct LABCOLOR
+    {
+        public UInt16 r;
+        public UInt16 g;
+        public UInt16 b;
+        //public LABCOLOR(UInt16 red, UInt16 green, UInt16 blue) { r = red; g = green; b = blue; }
+    }
+
     [DllImport("PlyLoader", CharSet = CharSet.Ansi)]
     public static extern IntPtr LoadPly(string fileName);
 
@@ -23,6 +31,8 @@ public class PlyLoaderDll : MonoBehaviour
 
     [DllImport("PlyLoader")]
     public static extern IntPtr GetPlyColors(IntPtr plyIntPtr, out int count);
+    [DllImport("PlyLoader")]
+    public static extern IntPtr GetPlyLABColors(IntPtr plyFile, out int count);
 
     [DllImport("PlyLoader")]
     public static extern IntPtr GetPlyIndexs(IntPtr plyIntPtr, out int count);
@@ -110,6 +120,39 @@ public class PlyLoaderDll : MonoBehaviour
         return resultList.ToArray();
     }
 
+    [DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = false)]
+    static extern void CopyMemory(IntPtr Destination, IntPtr Source, uint Length);
+    public static unsafe void Copy(IntPtr ptrSource, ushort[] dest, uint elements)
+    {
+        fixed (ushort* ptrDest = &dest[0])
+        {
+            CopyMemory((IntPtr)ptrDest, ptrSource, elements * 2);    // 2 bytes per element
+        }
+    }
+
+    public static PlyLoaderDll.LABCOLOR[] GetRColorsLAB(IntPtr plyIntPtr)
+    {
+        List<LABCOLOR> resultList = new List<LABCOLOR>();
+        int count;
+        IntPtr datPtr = GetPlyLABColors(plyIntPtr, out count);
+        print("in Dll wrapper:" + count + " colors");
+        if (count == 0)
+            return null;
+
+        UInt16[] colors = new UInt16[count * 3];
+        Copy(datPtr, colors, (uint)(count * 3));
+        for (int i = 0; i < count; i++)
+        {
+            LABCOLOR l;
+            l.r = colors[i * 3];
+            l.g = colors[i * 3 + 1];
+            l.b = colors[i * 3 + 2];
+            resultList.Add(l);
+        }
+            
+        return resultList.ToArray();
+    }
+
     public static int[] GetIndexs(IntPtr plyIntPtr)
     {
         List<int> resultList = new List<int>();
@@ -126,19 +169,20 @@ public class PlyLoaderDll : MonoBehaviour
         return resultList.ToArray();
     }
 
-    public static int[] GetRIndexs(IntPtr plyIntPtr)
+    public static uint[] GetRIndexs(IntPtr plyIntPtr)
     {
-        List<int> resultList = new List<int>();
+        List<uint> resultList = new List<uint>();
         int count;
         IntPtr datPtr = GetPlyIndexs(plyIntPtr, out count);
         print("in Dll wrapper:" + count + " indices");
         if (count == 0)
             return null;
 
-        int[] indexs = new int[count*3];
-        Marshal.Copy(datPtr, indexs, 0, count*3);
+        //uint[] indexs = new uint[count*3];
+        int[] temp = new int[count * 3];
+        Marshal.Copy(datPtr, temp, 0, count*3);
         for (int i = 0; i < count*3; i++)
-            resultList.Add(indexs[i]);
+            resultList.Add(Convert.ToUInt32(temp[i]));
         return resultList.ToArray();
     }
 

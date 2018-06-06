@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
+using System;
+
 public class ScanARCtrl : MonoBehaviour {
 
     public client zmqMeshClient;
@@ -20,12 +22,33 @@ public class ScanARCtrl : MonoBehaviour {
 
     public bool isJustIssueScan;
 
+    // osr related
+    IntPtr OSRdata, curAddedScan;
+    int scanAmount; // increase by one if scan new, decrease by one if integrated
+    Vector3[] integratedVerts;
+    Color32[] integratedColors;
+    uint[] integratedFaces;
+
+    List<Vector3[]> splitIntVerts;
+    List<Color32[]> splitIntColors;
+    List<uint[]> splitIntFaces;
+
+
     // Use this for initialization
     void Start () {
         scans = new List<GameObject>();
         packetId = -1;
         Utility.InitialIndices();
         isJustIssueScan = false;
+        print("before create OSRdata");
+        OSRdata = OSRDLL.GetOSRData();
+        print("OSRdata addr:" + OSRdata);
+        scanAmount = 0;
+
+        splitIntVerts = new List<Vector3[]>();
+        splitIntColors = new List<Color32[]>();
+        splitIntFaces = new List<uint[]>();
+
     }
 
     void ZMQhandle()
@@ -82,6 +105,33 @@ public class ScanARCtrl : MonoBehaviour {
         }
     }
 
+    public void IntegrateScan()
+    {
+        float prevTime = Time.realtimeSinceStartup;
+
+        //OSRDLL.OSROldIntegrate(OSRdata, ref curAddedScan, ref integratedVerts, ref integratedColors, ref integratedFaces);// later it will become vectors of the data for each mesh
+        // TODO
+        OSRDLL.OSRIntegrate(OSRdata, ref curAddedScan, ref splitIntVerts, ref splitIntColors, ref splitIntFaces);// later it will become vectors of the data for each mesh
+        //--scanAmount;
+        // modify the data of current scan
+        GameObject curScan = scans[scans.Count - 1];
+        float curTime = Time.realtimeSinceStartup;
+        print("IntegrateScan:" + (curTime - prevTime) + "s");
+
+        prevTime = Time.realtimeSinceStartup;
+        curScan.transform.GetComponent<PLYPathLoader>().UpdateIntegratedMesh(ref integratedVerts,  ref integratedColors,  ref integratedFaces);
+        curTime = Time.realtimeSinceStartup;
+        print("load meshes:" + (curTime - prevTime) + "s");
+
+    }
+
+    public void RegisterScan()
+    {
+        Matrix4x4 resTrans = Matrix4x4.identity;
+        OSRDLL.OSRRegister(OSRdata, curAddedScan, ref resTrans);
+        print("after Register() " + resTrans.ToString("F3"));
+    }
+
     // do what DavidLoader did
     void dllHandle()
     {
@@ -104,7 +154,10 @@ public class ScanARCtrl : MonoBehaviour {
             if (scanController != null)
                 newscan.transform.GetComponent<PLYPathLoader>().scanController = scanController;
 
+            // duplicate for sc and st test
             newscan.transform.GetComponent<PLYPathLoader>().LoadMeshesDirectly();
+            //newscan.transform.GetComponent<PLYPathLoader>().LoadMeshesDUO();
+
             float curTime = Time.realtimeSinceStartup;
             print("load meshes:" + (curTime - prevTime) + "s");
             newscan.transform.GetComponent<PLYPathLoader>().LoadMatrixDirectly();
@@ -114,12 +167,32 @@ public class ScanARCtrl : MonoBehaviour {
             // move that to session folder, it is fine not to do it now
 
             // render it with correct transform, get the calibration elsewhere
+
+            
         }
 
     }
 	
 	// Update is called once per frame
 	void Update () {
+
+        if (scans.Count > scanAmount)
+        {
+            // IntPtr OSRAddScan(IntPtr osrData, Vector3[] vertices, Color32[] colors, uint[] faces, Matrix4x4 mTransform)
+            PLYPathLoader ppl = scans[scans.Count - 1].transform.GetComponent<PLYPathLoader>();
+            print("ppl.rawScanColors:" + ppl.rawScanColors[0].ToString("F3") + " " + ppl.rawScanColors[100].ToString("F3"));
+            curAddedScan = OSRDLL.OSRAddScan(OSRdata, ppl.rawScanVertices, ppl.rawScanLabColors, ppl.rawScanFaces, ppl.originalSCtoDMatrix);
+            print("curAddedScan address:" + curAddedScan);
+            ++scanAmount;
+        }
+
         dllHandle();
+
+        
 	}
+
+    private void OnApplicationQuit()
+    {
+        OSRDLL.DestroyOSRData(OSRdata);
+    }
 }
