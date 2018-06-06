@@ -3,3 +3,7 @@ Assets/ViveSR/Plugins/
 Temp/
 *.meta
 *.pdb
+
+*.ply
+*.txt
+*.log
