@@ -82,7 +82,9 @@ public class Trackers : MonoBehaviour {
             GameObject goTracker = new GameObject();
             goTracker.transform.parent = transform;
             SteamVR_TrackedObject theTracker = goTracker.AddComponent<SteamVR_TrackedObject>();
+            SteamVR_RenderModel theModel = goTracker.AddComponent<SteamVR_RenderModel>();
             theTracker.index = (SteamVR_TrackedObject.EIndex)index[i];
+            theModel.SetDeviceIndex((int)index[i]);
             trackers.Add(goTracker);
             // then check the height
 

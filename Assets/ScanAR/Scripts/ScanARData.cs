@@ -72,6 +72,24 @@ public class ScanARData {
 
     public void SetDavidToViveTransform(Matrix4x4 matrixST2David, Matrix4x4 curScanTracker)
     {
+        curState = ScanState.VIVESYSTEM;
+        curData[(int)curState].vertices = curData[(int)ScanState.DAVIDSYSTEM].vertices;
+        curData[(int)curState].colors = curData[(int)ScanState.DAVIDSYSTEM].colors;
+        curData[(int)curState].labColors = curData[(int)ScanState.DAVIDSYSTEM].labColors;
+        curData[(int)curState].faces = curData[(int)ScanState.DAVIDSYSTEM].faces;
+
+        for (int i = 0; i < curData[(int)curState].vertices.Length; i++)
+        {
+            curData[(int)curState].vertices[i] *= 0.001f;
+            curData[(int)curState].vertices[i].z *= -1f;
+            // test this
+            //curData[(int)curState].vertices[i] = (curScanTracker * matrixST2David).MultiplyPoint(curData[(int)curState].vertices[i]);
+        }
+    }
+
+    public void SetDavidToViveTransform()
+    {
+        curState = ScanState.VIVESYSTEM;
         curData[(int)curState].vertices = curData[(int)ScanState.DAVIDSYSTEM].vertices;
         curData[(int)curState].colors = curData[(int)ScanState.DAVIDSYSTEM].colors;
         curData[(int)curState].labColors = curData[(int)ScanState.DAVIDSYSTEM].labColors;
