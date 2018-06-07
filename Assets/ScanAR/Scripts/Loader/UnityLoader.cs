@@ -31,7 +31,20 @@ public class UnityLoader : MonoBehaviour {
 		
 	}
 
-    public void AddScan()
+    public void Register(Matrix4x4 mtx)
+    {
+        curInstance.registerMtx = mtx;
+        curInstance.AfterRegister();    // change vertex pieces, which will be used for integration
+
+        for(int i = 0; i < updateGOs.Count; i++)
+        {
+            Mesh mesh = updateGOs[i].GetComponent<MeshFilter>().mesh;
+            Vector3[] registeredVerts = curInstance.curData[(int)curInstance.curState].verticesPieces[i];
+            mesh.vertices = registeredVerts;
+        }
+    }
+
+    public IntPtr AddScan()
     {
         if(OSRdata == IntPtr.Zero)
             OSRdata = OSRDLL.GetOSRData();
@@ -44,6 +57,7 @@ public class UnityLoader : MonoBehaviour {
         //curAddedScan = OSRDLL.OSRAddOldScan(OSRdata, ppl.rawScanVertices, ppl.rawScanColors, ppl.rawScanFaces, Matrix4x4.identity);
         float curTime = Time.realtimeSinceStartup;
         print("curAddedScan address:" + curAddedScan + " took :" + (curTime - prevTime) + "s");
+        return curAddedScan;
     }
 
     public void LoadMeshesDirectly()

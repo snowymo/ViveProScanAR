@@ -17,6 +17,10 @@ public class ScanARCtrl : MonoBehaviour {
 
     public bool isJustIssueScan;
 
+    bool isIntegrated;
+
+    GameObject integratedScan;
+
     // osr related
     IntPtr OSRdata, curAddedScan;
     int scanAmount; // increase by one if scan new, decrease by one if integrated
@@ -40,6 +44,8 @@ public class ScanARCtrl : MonoBehaviour {
         print("OSRdata addr:" + OSRdata);
 
         scans = new List<GameObject>();
+        isIntegrated = false;
+
         scanAmount = 0;
         splitIntVerts = new List<Vector3[]>();
         splitIntColors = new List<Color32[]>();
@@ -80,29 +86,72 @@ public class ScanARCtrl : MonoBehaviour {
 
     public void IntegrateScan()
     {
-        float prevTime = Time.realtimeSinceStartup;
 
-        //OSRDLL.OSROldIntegrate(OSRdata, ref curAddedScan, ref integratedVerts, ref integratedColors, ref integratedFaces);// later it will become vectors of the data for each mesh
-        // TODO
-        OSRDLL.OSRIntegrate(OSRdata, ref curAddedScan, ref splitIntVerts, ref splitIntColors, ref splitIntFaces);// later it will become vectors of the data for each mesh
-        //--scanAmount;
-        // modify the data of current scan
-        GameObject curScan = scans[scans.Count - 1];
+        float prevTime = Time.realtimeSinceStartup;
+        UnityLoader integratedScanLoader = integratedScan.GetComponent<UnityLoader>();
+        integratedScanLoader.curInstance = new ScanARData();
+        integratedScanLoader.curInstance.curState = ScanARData.ScanState.INTEG;
+
+        // set the data to the only integrated object
+        OSRDLL.OSRIntegrate(OSRdata, ref curAddedScan, ref integratedScanLoader.curInstance.getCurrentMeshData().verticesPieces,
+            ref integratedScanLoader.curInstance.getCurrentMeshData().colorsPieces,
+            ref integratedScanLoader.curInstance.getCurrentMeshData().facesPieces);// later it will become vectors of the data for each mesh
+
         float curTime = Time.realtimeSinceStartup;
         print("IntegrateScan:" + (curTime - prevTime) + "s");
 
         prevTime = Time.realtimeSinceStartup;
-        curScan.transform.GetComponent<PLYPathLoader>().UpdateIntegratedMesh(ref integratedVerts,  ref integratedColors,  ref integratedFaces);
+        
+        integratedScanLoader.updateGOs = new List<GameObject>();// 
+        for (int i = 0; i < integratedScanLoader.curInstance.getCurrentMeshData().colorsPieces.Count; i++)
+        {
+            Vector3[] curVerts = integratedScanLoader.curInstance.getCurrentMeshData().verticesPieces[i];
+            Color32[] curColors = integratedScanLoader.curInstance.getCurrentMeshData().colorsPieces[i];
+            uint[] curFaces = integratedScanLoader.curInstance.getCurrentMeshData().facesPieces[i];
+            Utility.createMesh(curVerts.Length, ref curVerts, ref curColors, curFaces.Length, ref curFaces,
+                ref integratedScanLoader.updateGOs, integratedScan.transform, integratedScanLoader.shader);
+        }
+
         curTime = Time.realtimeSinceStartup;
         print("load meshes:" + (curTime - prevTime) + "s");
+
+        // disable all scans
+        for(int i = 0; i < scans.Count; i++)
+        {
+            scans[i].SetActive(false);
+        }
 
     }
 
     public void RegisterScan()
     {
-        Matrix4x4 resTrans = Matrix4x4.identity;
-        OSRDLL.OSRRegister(OSRdata, curAddedScan, ref resTrans);
-        print("after Register() " + resTrans.ToString("F3"));
+        // if current scan amout is > 1 then do it
+        if(scans.Count > 1 && curAddedScan != IntPtr.Zero)
+        {
+            Matrix4x4 registerMtx = Matrix4x4.identity;
+                float prevTime = Time.realtimeSinceStartup;
+            OSRDLL.OSRRegister(OSRdata, curAddedScan, ref registerMtx);
+
+                float curTime = Time.realtimeSinceStartup;
+                Vector3 regPos = registerMtx.GetPosition();
+                Quaternion regRot = registerMtx.GetRotation();
+
+                print("after Register() " + (curTime - prevTime) + "s\t" + registerMtx.ToString("F3"));
+                print("reg pos:" + regPos.ToString("F3"));
+                print("reg rot:" + regRot.eulerAngles.ToString("F3"));
+
+            // right hand to left hand
+            registerMtx = Utility.LHMatrixFromRHMatrix(registerMtx);
+                
+                regPos = registerMtx.GetPosition();
+                regRot = registerMtx.GetRotation();
+                print(" lf reg pos:" + regPos.ToString("F3"));
+                print(" lf reg rot:" + regRot.eulerAngles.ToString("F3"));
+
+            // assign to the mesh to apply that
+            GameObject curScan = scans[scans.Count - 1];
+            curScan.transform.GetComponent<UnityLoader>().Register(registerMtx);
+        }
     }
 
     // do what DavidLoader did
@@ -112,6 +161,23 @@ public class ScanARCtrl : MonoBehaviour {
         if (isJustIssueScan && File.Exists(Utility.scanPath))
         {
             isJustIssueScan = false;
+
+            if (!isIntegrated)
+            {
+                isIntegrated = true;
+                // no integrated before, create the only integration obj under second tracker to maintain all the integration results
+                integratedScan = GameObject.Instantiate(loader);
+                // assign to secondTracker's child
+                integratedScan.transform.parent = trackers.Find("secondTracker");
+                // child's transform should be secT.inv * ST * ST2D, secT should be the transform when issued the scan
+                Matrix4x4 SecondTracker = Matrix4x4.TRS(integratedScan.transform.parent.transform.position, integratedScan.transform.parent.transform.rotation, Vector3.one);
+                Transform scanTrackerTrans = trackers.Find("scanTracker");
+                Matrix4x4 ScanTracker = Matrix4x4.TRS(scanTrackerTrans.position, scanTrackerTrans.rotation, Vector3.one);
+                Matrix4x4 childMatrix = SecondTracker.inverse * ScanTracker * matrixST2David;
+                integratedScan.transform.localPosition = childMatrix.GetPosition();
+                integratedScan.transform.localRotation = childMatrix.GetRotation();
+                integratedScan.name = "integrated";
+            }
 
             GameObject newscan = GameObject.Instantiate(loader);
             // assign to secondTracker's child
@@ -131,7 +197,7 @@ public class ScanARCtrl : MonoBehaviour {
             float curTime = Time.realtimeSinceStartup;
             print("load meshes:" + (curTime - prevTime) + "s");
 
-            newscan.GetComponent<UnityLoader>().AddScan();
+            curAddedScan = newscan.GetComponent<UnityLoader>().AddScan();
 
             scans.Add(newscan);
 
