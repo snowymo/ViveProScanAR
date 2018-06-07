@@ -21,7 +21,38 @@ public class Utility {
                 indices[i] = i;
             }
         }
-        
+    }
+
+    // https://github.com/artoolkit/arunity5/blob/35ec81e422a42c39f7e2391b1bc6b42beb3a36f4/src/Unity/Assets/ARToolKit5-Unity/Scripts/ARUtilityFunctions.cs
+    public static Matrix4x4 LHMatrixFromRHMatrix(Matrix4x4 rhm)
+    {
+        Matrix4x4 lhm = new Matrix4x4(); ;
+
+        // Column 0.
+        lhm[0, 0] = rhm[0, 0];
+        lhm[1, 0] = rhm[1, 0];
+        lhm[2, 0] = -rhm[2, 0];
+        lhm[3, 0] = rhm[3, 0];
+
+        // Column 1.
+        lhm[0, 1] = rhm[0, 1];
+        lhm[1, 1] = rhm[1, 1];
+        lhm[2, 1] = -rhm[2, 1];
+        lhm[3, 1] = rhm[3, 1];
+
+        // Column 2.
+        lhm[0, 2] = -rhm[0, 2];
+        lhm[1, 2] = -rhm[1, 2];
+        lhm[2, 2] = rhm[2, 2];
+        lhm[3, 2] = -rhm[3, 2];
+
+        // Column 3.
+        lhm[0, 3] = rhm[0, 3];
+        lhm[1, 3] = rhm[1, 3];
+        lhm[2, 3] = -rhm[2, 3];
+        lhm[3, 3] = rhm[3, 3];
+
+        return lhm;
     }
 
     public static void createMesh(int startIdx, int verticeCnt, ref Vector3[] vertex, ref Color32[] color, ref List<GameObject> gos, Transform parent, Shader shader, ref List<Vector3[]> iniVertices)
@@ -91,6 +122,8 @@ public class Utility {
 
         GameObject go = new GameObject("go" + startIdx.ToString());
         go.transform.parent = parent;
+        go.transform.localPosition = Vector3.zero;
+        go.transform.localRotation = Quaternion.identity;
         gos.Add(go);
         curInstance.curData[(int)curInstance.curState].verticesPieces.Add(curV);
 

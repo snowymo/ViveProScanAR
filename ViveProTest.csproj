@@ -272,6 +272,7 @@
     <Compile Include="Assets\ScanAR\Scripts\Loader\PLYPathLoader.cs" />
     <Compile Include="Assets\ScanAR\Scripts\Loader\TestLoader.cs" />
     <Compile Include="Assets\ScanAR\Scripts\Loader\TestRplyLoader.cs" />
+    <Compile Include="Assets\ScanAR\Scripts\Loader\UnityLoader.cs" />
     <Compile Include="Assets\ScanAR\Scripts\OSR\OSRDllTest.cs" />
     <Compile Include="Assets\ScanAR\Scripts\OSR\UpdateCtrl.cs" />
     <Compile Include="Assets\ScanAR\Scripts\ScanARCtrl.cs" />

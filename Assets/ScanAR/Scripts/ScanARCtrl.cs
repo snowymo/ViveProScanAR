@@ -7,18 +7,13 @@ using System;
 
 public class ScanARCtrl : MonoBehaviour {
 
-    public client zmqMeshClient;
+    public Matrix4x4 matrixST2David;
 
-    public client zmqMatrixClient;
-
-    public Transform steamTracker, secondController;
-    public Transform scanController;
+    public Transform trackers, secondController, scanController;
 
     public GameObject loader;
 
     List<GameObject> scans;
-
-    int packetId;
 
     public bool isJustIssueScan;
 
@@ -36,73 +31,51 @@ public class ScanARCtrl : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        scans = new List<GameObject>();
-        packetId = -1;
         Utility.InitialIndices();
         isJustIssueScan = false;
+        LoadST2DMatrix();
+
         print("before create OSRdata");
         OSRdata = OSRDLL.GetOSRData();
         print("OSRdata addr:" + OSRdata);
-        scanAmount = 0;
 
+        scans = new List<GameObject>();
+        scanAmount = 0;
         splitIntVerts = new List<Vector3[]>();
         splitIntColors = new List<Color32[]>();
         splitIntFaces = new List<uint[]>();
 
     }
 
-    void ZMQhandle()
+    public void LoadST2DMatrix()
     {
-        if (zmqMeshClient.bNewMsg)
+        StreamReader reader = new StreamReader(Utility.calibrationFilePath);
+        string line;
+        // Read and display lines from the file until the end of the file is reached.
+        while ((line = reader.ReadLine()) != null)
         {
-            if (zmqMeshClient.msgType == client.MsgType.POINTS)
+            if (line.Contains(Utility.calibScanTrackerIndicator))
             {
-                // then we need to have a matrix for T->D
-                if (!zmqMatrixClient.bNewMsg)
-                    return;
-            }
-            // check packet id, they should be adjacent and larger than current one
-            if ((zmqMeshClient.currentId > packetId) || (zmqMeshClient.currentId <= 1))
-            {
-                packetId = zmqMeshClient.currentId;
-
-                GameObject newscan = GameObject.Instantiate(loader);
-                newscan.transform.parent = transform;
-                newscan.transform.GetComponent<PLYPathLoader>().zmqMeshClient = zmqMeshClient;
-                newscan.transform.GetComponent<PLYPathLoader>().zmqMatrixClient = zmqMatrixClient;
-                float prevTime = Time.realtimeSinceStartup;
-                newscan.transform.GetComponent<PLYPathLoader>().LoadMeshes();
-                float curTime = Time.realtimeSinceStartup;
-                print("load meshes:" + (curTime - prevTime) + "s");
-                newscan.transform.GetComponent<PLYPathLoader>().LoadMatrix();
-                if (steamTracker != null)
-                    newscan.transform.GetComponent<PLYPathLoader>().steamTracker = steamTracker;
-
-
-                // we only need to keep at most one point cloud mesh and one mesh list
-                // if the latest info is integrated mesh, then we only show integrated mesh;
-                // if it is point cloud, then we show point cloud and integrate mesh(which might be empty at the beginning;
-
-                if (scans.Count >= 2)
+                line = reader.ReadLine();//#
+                for (int rowIdx = 0; rowIdx < 4; rowIdx++)
                 {
-                    if (scans[scans.Count - 2].transform.GetComponent<PLYPathLoader>().zmqMeshClient.msgType == client.MsgType.POINTS)
-                        scans[scans.Count - 2].SetActive(false);
+                    line = reader.ReadLine(); // first line
+                    string[] firstRow = line.Split(new string[] { " " }, StringSplitOptions.None);
+                    for (int colIdx = 0; colIdx < firstRow.Length; colIdx++)
+                        matrixST2David[rowIdx, colIdx] = float.Parse(firstRow[colIdx]);
                 }
-
-                if (zmqMeshClient.msgType == client.MsgType.MESHES)
-                {
-                    // disable previous meshes and latest point cloud
-                    if (scans[scans.Count - 1].transform.GetComponent<PLYPathLoader>().zmqMeshClient.msgType == client.MsgType.POINTS)
-                        scans[scans.Count - 1].SetActive(false);
-                }
-
-                scans.Add(newscan);
-
-                zmqMeshClient.bNewMsg = false;
-                zmqMatrixClient.bNewMsg = false;
-
             }
         }
+        reader.Close();
+
+        // from david scale to unity scale
+        for (int i = 0; i < 3; i++)
+            matrixST2David[i, 3] /= 1000f;
+
+        // right hand to left hand
+        matrixST2David = Utility.LHMatrixFromRHMatrix(matrixST2David);
+
+        print("Matrix ST to David:" + matrixST2David.ToString("F3"));
     }
 
     public void IntegrateScan()
@@ -133,42 +106,36 @@ public class ScanARCtrl : MonoBehaviour {
     }
 
     // do what DavidLoader did
-    void dllHandle()
+    void LoadScan()
     {
         // check if the file exist
         if (isJustIssueScan && File.Exists(Utility.scanPath))
         {
             isJustIssueScan = false;
 
-            // load the ply 
             GameObject newscan = GameObject.Instantiate(loader);
-            newscan.transform.parent = transform;
+            // assign to secondTracker's child
+            newscan.transform.parent = trackers.Find("secondTracker");
+            // child's transform should be secT.inv * ST * ST2D, secT should be the transform when issued the scan
+            Matrix4x4 curSecondTracker = Matrix4x4.TRS(newscan.transform.parent.transform.position, newscan.transform.parent.transform.rotation, Vector3.one);
+            Transform scanTrackerTransform = trackers.Find("scanTracker");
+            Matrix4x4 curScanTracker = Matrix4x4.TRS(scanTrackerTransform.position, scanTrackerTransform.rotation, Vector3.one);
+            Matrix4x4 childMtx = curSecondTracker.inverse * curScanTracker * matrixST2David;
+            newscan.transform.localPosition = childMtx.GetPosition();
+            newscan.transform.localRotation = childMtx.GetRotation();
+            print("newscan:" + newscan.transform.localPosition.ToString("F3") + "\t" + newscan.transform.localRotation.ToString("F3"));
+
+            // load the ply
             float prevTime = Time.realtimeSinceStartup;
-            //newscan.transform.GetComponent<PLYPathLoader>().plyCoordType = PLYPathLoader.PLY_COORD.TEST;
-            if (steamTracker.gameObject.GetComponent<Trackers>().secondTracker != null)
-                newscan.transform.GetComponent<PLYPathLoader>().steamTracker = steamTracker.gameObject.GetComponent<Trackers>().secondTracker.transform;
-            if (steamTracker.gameObject.GetComponent<Trackers>().scanTracker != null)
-                newscan.transform.GetComponent<PLYPathLoader>().scanTracker = steamTracker.gameObject.GetComponent<Trackers>().scanTracker.transform;
-            if (secondController != null)
-                newscan.transform.GetComponent<PLYPathLoader>().secondaryController = secondController;
-            if (scanController != null)
-                newscan.transform.GetComponent<PLYPathLoader>().scanController = scanController;
-
-            // duplicate for sc and st test
-            newscan.transform.GetComponent<PLYPathLoader>().LoadMeshesDirectly();
-            //newscan.transform.GetComponent<PLYPathLoader>().LoadMeshesDUO();
-
+            newscan.GetComponent<UnityLoader>().LoadMeshesDirectly();
             float curTime = Time.realtimeSinceStartup;
             print("load meshes:" + (curTime - prevTime) + "s");
-            newscan.transform.GetComponent<PLYPathLoader>().LoadMatrixDirectly();
+
+            newscan.GetComponent<UnityLoader>().AddScan();
 
             scans.Add(newscan);
 
             // move that to session folder, it is fine not to do it now
-
-            // render it with correct transform, get the calibration elsewhere
-
-            
         }
 
     }
@@ -176,17 +143,13 @@ public class ScanARCtrl : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (scans.Count > scanAmount)
-        {
-            // IntPtr OSRAddScan(IntPtr osrData, Vector3[] vertices, Color32[] colors, uint[] faces, Matrix4x4 mTransform)
-            PLYPathLoader ppl = scans[scans.Count - 1].transform.GetComponent<PLYPathLoader>();
-            print("ppl.rawScanColors:" + ppl.rawScanColors[0].ToString("F3") + " " + ppl.rawScanColors[100].ToString("F3"));
-            curAddedScan = OSRDLL.OSRAddScan(OSRdata, ppl.rawScanVertices, ppl.rawScanLabColors, ppl.rawScanFaces, ppl.originalSCtoDMatrix);
-            print("curAddedScan address:" + curAddedScan);
-            ++scanAmount;
-        }
+//         if (scans.Count > scanAmount)
+//         {
+//             
+//             ++scanAmount;
+//         }
 
-        dllHandle();
+        LoadScan();
 
         
 	}
