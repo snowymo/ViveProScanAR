@@ -87,7 +87,7 @@ public class ScanARData {
         }
     }
 
-    public void SetDavidToViveTransform()
+    public void SetDavidToViveTransform(Matrix4x4 childMtx)
     {
         curState = ScanState.VIVESYSTEM;
         curData[(int)curState].vertices = curData[(int)ScanState.DAVIDSYSTEM].vertices;
@@ -100,7 +100,7 @@ public class ScanARData {
             curData[(int)curState].vertices[i] *= 0.001f;
             curData[(int)curState].vertices[i].z *= -1f;
             // test this
-            //curData[(int)curState].vertices[i] = (curScanTracker * matrixST2David).MultiplyPoint(curData[(int)curState].vertices[i]);
+            curData[(int)curState].vertices[i] = childMtx.MultiplyPoint(curData[(int)curState].vertices[i]);
         }
     }
 

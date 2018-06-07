@@ -60,7 +60,7 @@ public class UnityLoader : MonoBehaviour {
         return curAddedScan;
     }
 
-    public void LoadMeshesDirectly()
+    public void LoadMeshesDirectly(Matrix4x4 childMtx)
     {
         IntPtr plyIntPtr = PlyLoaderDll.LoadPly(Utility.scanPath);
 
@@ -79,7 +79,7 @@ public class UnityLoader : MonoBehaviour {
         curInstance.curState = ScanARData.ScanState.DAVIDSYSTEM;
         curInstance.SetData(rawScanVertices, rawScanColors, rawScanLabColors, rawScanFaces);
         // state update to vive and verts turn to unity scale and left handed
-        curInstance.SetDavidToViveTransform();
+        curInstance.SetDavidToViveTransform(childMtx);
 
         int meshCount = rawScanVertices.Length / Utility.limitCount + 1;
         for (int i = 0; i < meshCount; i++)

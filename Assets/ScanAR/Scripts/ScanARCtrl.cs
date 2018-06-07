@@ -170,12 +170,12 @@ public class ScanARCtrl : MonoBehaviour {
                 // assign to secondTracker's child
                 integratedScan.transform.parent = trackers.Find("secondTracker");
                 // child's transform should be secT.inv * ST * ST2D, secT should be the transform when issued the scan
-                Matrix4x4 SecondTracker = Matrix4x4.TRS(integratedScan.transform.parent.transform.position, integratedScan.transform.parent.transform.rotation, Vector3.one);
-                Transform scanTrackerTrans = trackers.Find("scanTracker");
-                Matrix4x4 ScanTracker = Matrix4x4.TRS(scanTrackerTrans.position, scanTrackerTrans.rotation, Vector3.one);
-                Matrix4x4 childMatrix = SecondTracker.inverse * ScanTracker * matrixST2David;
-                integratedScan.transform.localPosition = childMatrix.GetPosition();
-                integratedScan.transform.localRotation = childMatrix.GetRotation();
+//                 Matrix4x4 SecondTracker = Matrix4x4.TRS(integratedScan.transform.parent.transform.position, integratedScan.transform.parent.transform.rotation, Vector3.one);
+//                 Transform scanTrackerTrans = trackers.Find("scanTracker");
+//                 Matrix4x4 ScanTracker = Matrix4x4.TRS(scanTrackerTrans.position, scanTrackerTrans.rotation, Vector3.one);
+//                 Matrix4x4 childMatrix = SecondTracker.inverse * ScanTracker * matrixST2David;
+                integratedScan.transform.localPosition = Vector3.zero;
+                integratedScan.transform.localRotation = Quaternion.identity;
                 integratedScan.name = "integrated";
             }
 
@@ -187,13 +187,13 @@ public class ScanARCtrl : MonoBehaviour {
             Transform scanTrackerTransform = trackers.Find("scanTracker");
             Matrix4x4 curScanTracker = Matrix4x4.TRS(scanTrackerTransform.position, scanTrackerTransform.rotation, Vector3.one);
             Matrix4x4 childMtx = curSecondTracker.inverse * curScanTracker * matrixST2David;
-            newscan.transform.localPosition = childMtx.GetPosition();
-            newscan.transform.localRotation = childMtx.GetRotation();
-            print("newscan:" + newscan.transform.localPosition.ToString("F3") + "\t" + newscan.transform.localRotation.ToString("F3"));
+             newscan.transform.localPosition = Vector3.zero;
+             newscan.transform.localRotation = Quaternion.identity;
+//            print("newscan:" + newscan.transform.localPosition.ToString("F3") + "\t" + newscan.transform.localRotation.ToString("F3"));
 
             // load the ply
             float prevTime = Time.realtimeSinceStartup;
-            newscan.GetComponent<UnityLoader>().LoadMeshesDirectly();
+            newscan.GetComponent<UnityLoader>().LoadMeshesDirectly(childMtx);
             float curTime = Time.realtimeSinceStartup;
             print("load meshes:" + (curTime - prevTime) + "s");
 
