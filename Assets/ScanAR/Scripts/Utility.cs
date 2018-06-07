@@ -87,6 +87,8 @@ public class Utility {
 
         GameObject go = new GameObject("go" + startIdx.ToString());
         go.transform.parent = parent;
+        go.transform.localPosition = Vector3.zero;
+        go.transform.localRotation = Quaternion.identity;
         gos.Add(go);
         iniVertices.Add(curV);
 
@@ -172,6 +174,8 @@ public class Utility {
 
         GameObject go = new GameObject("go");
         go.transform.parent = parent;
+        go.transform.localPosition = Vector3.zero;
+        go.transform.localRotation = Quaternion.identity;
         gos.Add(go);
 
         MeshFilter mf = go.AddComponent<MeshFilter>();
