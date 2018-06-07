@@ -103,6 +103,15 @@ public class ScanARCtrl : MonoBehaviour {
         prevTime = Time.realtimeSinceStartup;
         
         integratedScanLoader.updateGOs = new List<GameObject>();// 
+
+        // disable all integrated children
+        for(int i = 0; i < integratedScan.gameObject.transform.childCount; i++)
+        {
+            Transform childTrans = integratedScan.gameObject.transform.GetChild(i);
+            childTrans.gameObject.SetActive(false);
+        }
+        
+
         for (int i = 0; i < integratedScanLoader.curInstance.getCurrentMeshData().colorsPieces.Count; i++)
         {
             Vector3[] curVerts = integratedScanLoader.curInstance.getCurrentMeshData().verticesPieces[i];
