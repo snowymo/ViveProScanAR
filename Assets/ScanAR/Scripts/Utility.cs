@@ -97,6 +97,9 @@ public class Utility {
 
         MeshRenderer mr = go.AddComponent<MeshRenderer>();
         mr.material = new Material(shader);
+//         mr.materials = new Material[2];
+//         mr.materials[0] = new Material(shader);
+//         mr.materials[1] = new Material(Shader.Find("VR/SpatialMapping/Wireframe"));
     }
 
     public static void createMesh(int startIdx, int verticeCnt, ref ScanARData curInstance, ref List<GameObject> gos, Transform parent, Shader shader)
@@ -134,8 +137,9 @@ public class Utility {
 
         MeshRenderer mr = go.AddComponent<MeshRenderer>();
         mr.material = new Material(shader);
-
-        Debug.Log("ScanVerticesPieces:" + curInstance.curData[(int)curInstance.curState].verticesPieces.Count);
+        //         mr.materials = new Material[2];
+        //         mr.materials[0] = new Material(shader);
+        //         mr.materials[1] = new Material(Shader.Find("VR/SpatialMapping/Wireframe"));
     }
 
     // for integrated results
@@ -183,6 +187,9 @@ public class Utility {
 
         MeshRenderer mr = go.AddComponent<MeshRenderer>();
         mr.material = new Material(shader);
+        //         mr.materials = new Material[2];
+        //         mr.materials[0] = new Material(shader);
+        //         mr.materials[1] = new Material(Shader.Find("VR/SpatialMapping/Wireframe"));
     }
 
     public static string calibrationFilePath = "D:\\Projects\\OnlineSurfaceReconstruction\\build_msvc14_64\\Calibration.aln";

@@ -36,16 +36,23 @@ public class ControllerInput : MonoBehaviour {
             Vector3 ctrlPos0 = hands[0].transform.position;
             Vector3 ctrlPos1 = hands[1].transform.position;
 
-            if(ctrlPos0.y > ctrlPos1.y)
+            if (ctrlPos0.y == 0)
+                return;
+            if (ctrlPos1.y == 0)
+                return;
+
+            if (ctrlPos0.y > ctrlPos1.y)
             {
                 scannerController = hands[0];
                 secondController = hands[1];
             }
-            else
+            else if (ctrlPos0.y < ctrlPos1.y)
             {
                 scannerController = hands[1];
                 secondController = hands[0];
             }
+            else
+                return;
 
             scanARCtrl.secondController = secondController.transform;
             scanARCtrl.scanController = scannerController.transform;

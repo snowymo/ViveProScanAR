@@ -55,8 +55,8 @@ public class OSRDLL : MonoBehaviour {
             _osrInstance = CreateOSRData();
             Debug.Log("GetOSRData called");
             // set scale here, normally edge of the result is ok to be 0.05ish
-//             SetScale(_osrInstance, 0.01f);
-             SetMaxRegError(_osrInstance, 0.08f);
+             SetScale(_osrInstance, 0.01f);
+             SetMaxRegError(_osrInstance, 0.01f);
         }
         return _osrInstance;
     }
